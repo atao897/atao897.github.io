@@ -1,0 +1,12 @@
+#display {
+	max-height: 70vh;
+	overflow-y: scroll;
+	min-height: 350px;
+	min-width: 350px;
+	padding-left: 3em;
+}
+#info {
+	max-width: 800px;
+	padding-left: 1em;
+	padding-top: 0.25em;
+}

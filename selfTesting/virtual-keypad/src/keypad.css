@@ -1,0 +1,135 @@
+/* REMOTE KEYPAD STYLING */
+#keypad-header {
+  margin-top: 2%;
+  padding-left: 1em;
+  max-height: 10vh;
+  width: 100%;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: left;
+  touch-action: none;
+}
+
+#keypad {
+  /* Center the keypad */
+  margin: auto;
+  width: 90vw;
+
+  /* 
+  Don't rely on very bottom of screen, which
+  may be used by menu bar on smartphone
+  */
+  margin-bottom: 5vh;
+
+  /* Use full height */
+  /* height: 90vh; */
+
+  /* Auto grid of buttons */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  justify-content: space-evenly;
+}
+
+.response-button {
+  max-width: 25vw;
+  min-width: 44px;
+  max-height: 25vw;
+  min-width: 44px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12.5%;
+  border: darkslategray 2px solid;
+
+  font-size: 3rem;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+.response-button#SPACE {
+  /* TODO actually make sure test doesn't clip */
+  font-size: 3vw; 
+}
+.response-button#ESC {
+  /* TODO actually make sure test doesn't clip */
+  font-size: 4vw; 
+}
+.response-button:active {
+  box-shadow: 1px 5px 5px 1px #999;
+  background-color: #bbb;
+}
+
+/* Only do on a hover-enabled device, ie not a phone/tablet */
+@media (hover: hover) {
+  .response-button:hover {
+    box-shadow: 1px 5px 5px 1px lightslategray;
+  }
+}
+
+/* Very narrow windows */
+@media only screen and (max-width: 200px) {
+  #keypad {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .response-button {
+    width: 37.5vw;
+    height: 37.5vw;
+  }
+}
+
+/* Wide windows */
+@media only screen and (min-width: 823px) {
+  #keypad {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .response-button {
+    width: 20vw;
+    height: 20vw;
+  }
+}
+/* Landscape phones */
+@media only screen and (max-width: 823px) and (orientation: landscape) {
+  #keypad-header {
+    height: 15vh;
+    padding: 0.25em 0.5em 0 0.25em;
+  }
+  #keypad {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .response-button {
+    width: 18vw;
+    height: 18vw;
+  }
+}
+
+/* .response-button:active {
+    background-color: steelblue;
+    box-shadow: 1px 5px 5px 1px lightslategray;
+} */
+
+.response-button-label {
+  text-align: center;
+  /* color: #eeeeee; */
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
+
+.unpressable {
+  background-color: #999;
+  /* border-color: lightgray;  */
+  box-shadow: none;
+}
