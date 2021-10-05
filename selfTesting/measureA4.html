@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            min-height: 100vh;
+        }
+        section {
+            margin: auto;
+            text-align: center;
+        }
+        #rowofA4 {
+            width: calc(90vw - 2px); /* 297X200 */
+            height: calc(90vw * 0.1333);
+            border: 2px solid;
+            background: linear-gradient(90deg, transparent 99%, currentColor 99%, currentColor 100%);
+            background-size: 18vw 100%;
+            position: relative;
+        }
+        .sheet {
+            box-sizing: border-box;
+            width: calc(18vw - 1px);
+            height: calc(90vw * 0.1333);
+            background-color: rgba(0,0,0,0.1);
+            color: #fefefe;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+        .sheet::before {
+            content: "A4";
+            font-weight: bold;
+            font-size: 4vw;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        #sheet1,#sheet2 {
+            animation-fill-mode: both;
+            animation-timing-function: linear;
+            animation-duration: 3s;
+            animation-delay: 1s;
+        }
+        #sheet1 {
+            animation-name: a1;
+        }
+        @keyframes a1 {
+            0%{ transform: translate(-5%, -100%); opacity: 0}
+            10%,20%{ transform: translate(0, 0); opacity: 1}
+            25%{ transform: translate(50%, -20%);}
+            30%{ transform: translate(100%, -30%);}
+            35%{ transform: translate(150%, -20%);}
+            40%,80%{ transform: translate(200%, 0);}
+            85%{ transform: translate(250%, -20%);}
+            90%{ transform: translate(300%, -30%);}
+            95%{ transform: translate(350%, -20%);}
+            to{ transform: translate(400%, 0); opacity: 1}
+        }
+        #sheet2 {
+            animation-name: a2;
+        }
+        @keyframes a2 {
+            0%{ transform: translate(-5%, -100%); opacity: 0}
+            10%,50%{ transform: translate(100%, 0); opacity: 1}
+            55%{ transform: translate(150%, -20%);}
+            60%{ transform: translate(200%, -30%);}
+            65%{ transform: translate(250%, -20%);}
+            70%,to{ transform: translate(300%, 0); opacity: 1}
+        }
+    </style>
+</head>
+<body>
+<section>
+    <div id="rowofA4">
+        <div class="sheet" id="sheet1"></div>
+        <div class="sheet" id="sheet2"></div>
+    </div>
+    <h3>Test page for Steven's two sheet measure technique</h3>
+</section>    
+</body>
+</html>

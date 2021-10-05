@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        h3 {padding: 0 0.5em;}
+        #holdingImageStill {
+            display: flex;
+        }
+        #imageNew {
+            margin: auto;
+        }
+        .contentTest {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(1em, 1fr));
+            grid-template-rows: 1fr 1fr;
+            grid-gap: 0.5em;
+            justify-items: center;
+        }
+        @media (min-width: 800px){
+            .contentTest {
+                grid-template-columns: repeat(10, 1fr);
+                grid-template-rows: 1fr;
+
+            }
+        }
+        @media (orientation: landscape) and (max-height: 767px) {
+            section.centered {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                justify-items: start;
+            }
+            #holdingImageStill {
+                height: unset !important;
+            }
+        }
+    </style>
+</head>
+<body style="display: flex">
+    <section class="centered">
+        <div id="holdingImageStill" style="height:280px" style="text-align: center">
+            <img id="imageNew" src="letters/Pic1.svg" alt="" />
+        </div>
+        <div>
+            <div class="contentTest">
+    
+                <button class="symbolButton" onclick="symbol8()">0</button>
+                <button class="symbolButton" onclick="symbol4()">1</button>
+                <button class="symbolButton" onclick="symbol2()">2</button>
+                <button class="symbolButton" onclick="symbol1()">3</button>
+                <button class="symbolButton" onclick="symbol9()">4</button>
+                <button class="symbolButton" onclick="symbol6()">7</button>
+                <button class="symbolButton" onclick="symbol7()">8</button>
+                <button class="symbolButton" onclick="symbol10()">9</button>
+                <button class="symbolButton" onclick="symbol3()">5</button>
+                <button class="symbolButton" onclick="symbol5()">6</button>
+    
+            </div>
+            <h1>Click/tap the patient's choice.</h1>
+        </div>
+    </section>
+    <script>
+        function symbol0() {
+            localStorage.AnswerSymbol = 0
+            checkAnswer()
+        }
+        function symbol1() {
+            localStorage.AnswerSymbol = 1
+            checkAnswer()
+        }
+        function symbol2() {
+            localStorage.AnswerSymbol = 2
+            checkAnswer()
+        }
+        function symbol3() {
+            localStorage.AnswerSymbol = 3
+            checkAnswer()
+        }
+        function symbol4() {
+            localStorage.AnswerSymbol = 4
+            checkAnswer()
+        }
+        function symbol5() {
+            localStorage.AnswerSymbol = 5
+            checkAnswer()
+        }
+        function symbol6() {
+            localStorage.AnswerSymbol = 6
+            checkAnswer()
+        }
+        function symbol7() {
+            localStorage.AnswerSymbol = 7
+            checkAnswer()
+        }
+        function symbol8() {
+            localStorage.AnswerSymbol = 8
+            checkAnswer()
+        }
+        function symbol9() {
+            localStorage.AnswerSymbol = 9
+            checkAnswer()
+        }
+        function symbol10() {
+            localStorage.AnswerSymbol = 10
+            checkAnswer()
+        }
+
+        function checkAnswer() {
+            imageNew.src = "images/blank.png";
+            if (localStorage.AnswerSymbol == localStorage.symbolPic) {
+                console.log("CORRECT");
+                timestamp.push(Date.now());
+                localStorage.timeStampLeft = timestamp;
+                window.setTimeout(function(){
+                    localStorage.logMARLeft = Correct(1, Storage, 'email.html', 'symbols/Pic');
+                    localStorage.AnswerSymbol = 0;
+                }, 100);
+
+            } else {
+                console.log("INCORRECT");
+                timestamp.push(Date.now());
+                localStorage.timeStampLeft = timestamp;
+                window.setTimeout(function(){
+                    localStorage.logMARLeft = Incorrect(1, Storage, 'email.html', 'symbols/Pic');
+                    localStorage.AnswerSymbol = 0;
+                }, 100);
+            }
+        }
+    </script>
+    
+    <script>
+        var imagesize = localStorage.arrayPixels.split(',');
+        var holdingImageStill = document.getElementById("holdingImageStill");
+        holdingImageStill.style = "width:" + imagesize[imagesize.length - 1] + "px"
+        var height = parseInt(imagesize[imagesize.length - 1], 10) + 20
+        holdingImageStill.style = "height:" + height + "px"
+        var random = Math.floor(Math.random() * 10) + 1;
+        var imageName = 'symbols/Pic' + random + '.svg';
+        var img = document.getElementById("imageNew");
+        localStorage.symbolPic = random
+        img.src = imageName;
+        img.style = "width:" + imagesize[imagesize.length - 2] + "px"
+
+        localStorage.LetterorSymbol = "Symbol"
+        localStorage.FirstStimulusLeft = random
+        localStorage.FirstTrialNumberLeft = 1
+        var FirstlogMarLeft = 1.2 - (localStorage.countHighest) * 0.1 - 0.1
+        FirstlogMarLeft = Math.round(FirstlogMarLeft * 100) / 100;
+        localStorage.FirstlogMarLeft = FirstlogMarLeft
+
+        var timestamp = [];
+        timestamp.push(Date.now())
+    </script>
+    
+    <script src="assets/js/main.js"></script>
+    
+    </body>
+    
+</html>
+
+

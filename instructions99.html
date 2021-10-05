@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        .content {
+            display: grid;
+            max-height: 100vh;
+            grid-template-rows: 1fr minmax(350px, 1fr) minmax(350px, 1fr) 1fr;
+            max-width: 60%;
+            margin: auto;
+            justify-content: center;
+        }
+        .img {
+            background: no-repeat;
+            background-size: contain;
+            background-position: center;
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 6fr 1fr;
+            align-items: end;
+        }
+
+        .img.tag::before, .img.tag::after {
+            content: "1";
+            justify-self: end;
+            /* position: absolute; */
+        }
+        .img.tag::after {
+            justify-self: left;
+        }
+        .img.tag::before, .img.tag::after, b {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            text-align: center;
+            line-height: 48px;
+            font-size: 28px;
+            font-weight: bold;
+            left: 10px;
+            border-radius: 50%;
+            color: white;
+            background-color: #fb805f;
+        }
+        .img.tag::after, b.blue {
+            content: "2";
+            left: 50%;
+            background-color: #6797c2;
+        }
+        b {
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            font-size: 18px;
+            margin: 8px;
+            margin-left: -40px;
+        }
+
+
+
+        .text {
+            align-self: center;
+            background-color: var(--color-light-1);
+            padding: 0 2em;
+            justify-self: center;
+        }
+        .content::before, .content::after {
+            content:"";
+        }
+        iframe {
+            border: none;
+            grid-column: 1 / 4;
+        }
+        @media (min-width: 1200px) {
+            .text>h2 {
+                min-width: 50vw; /* some titles are so small on bigger screens, need to beef up so background-image doesn't get too small */
+            }
+            iframe {
+                grid-column: 2;
+                width: 70%;
+            }
+        }
+        @media (max-width: 700px) {
+            .content {
+                max-width: 85vw;
+            }
+            iframe {
+                width: 100vw;
+            }
+        }
+        @media (orientation: landscape) and (max-width: 820px) {
+            iframe {
+                width: 55vw;
+            }
+            .content {
+                grid-template-rows: 1fr 1fr 1fr;
+                grid-template-columns: 1fr  1fr;
+                column-gap: 3rem;
+            }
+            .content::before, .content::after {
+                grid-column: 1 / -1;
+            }
+            .img {
+                grid-column: 1;
+            }
+        }
+        ol {
+            list-style-type: none;
+            padding-left: 18px;
+            text-align: left;
+            max-width: 600px;
+            margin-bottom: 0;
+        }
+        div.prog {
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        div.prog>i.active {
+            background-color: var(--color-primary);
+        }
+        div.prog>i {
+            display: inline-block;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            margin: 2px;
+            background-color: var(--color-light-2);
+        }
+        div.prog.Letter>i:first-child{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <section class="content">
+        <div class="img" id="ipar"><p></p></div>
+        <div class="text">
+            <h2></h2>
+            <div></div>
+            <div class="prog">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><button id="nextButton">Next</button>
+            </div>
+        </div>
+    </section>
+    <script src="assets/js/main.js"></script>
+    <script>
+        nextButton.addEventListener("click", nextInstruction);
+        nextButton.parentElement.classList.add(localStorage.letterorSymbol);
+        instructionSetter(localStorage.pageNum || 1);
+    </script>
+</body>
+</html>
+

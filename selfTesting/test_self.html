@@ -1,0 +1,531 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<script>
+function show(shown, hidden) {
+  document.getElementById(shown).style.display='block';
+  document.getElementById(hidden).style.display='none';
+  return false;
+}
+
+localStorage.phase = "firstPhase"
+</script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        h3 {padding: 0 0.5em;}
+        #holdingImageStill {
+            display: flex;
+        }
+
+        #holdingImageStill_page5 {
+            display: flex;
+        }
+
+        #imageNew {
+            margin: auto;
+        }
+        #imageNew_page5 {
+            margin: auto;
+        }
+        .contentTest {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(1em, 1fr));
+            grid-template-rows: 1fr 1fr;
+            grid-gap: 0.5em;
+            justify-items: center;
+        }
+        @media (min-width: 800px){
+            .contentTest {
+                grid-template-columns: repeat(10, 1fr);
+                grid-template-rows: 1fr;
+
+            }
+        }
+        @media (orientation: landscape) and (max-height: 767px) {
+            section.centered {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                justify-items: start;
+            }
+            #holdingImageStill {
+                height: unset !important;
+            }
+            #holdingImageStill_page5 {
+                height: unset !important;
+            }
+        }
+
+        .content {
+            display: grid;
+            max-height: 100vh;
+            grid-template-rows: 1fr minmax(350px, 1fr) minmax(350px, 1fr) 1fr;
+            max-width: 60%;
+            margin: auto;
+            justify-content: center;
+        }
+        .img {
+            background: no-repeat;
+            background-size: contain;
+            background-position: center;
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 6fr 1fr;
+            align-items: end;
+        }
+
+
+        .text {
+            align-self: center;
+            background-color: var(--color-light-1);
+            padding: 0 2em;
+            justify-self: center;
+        }
+        .content::before, .content::after {
+            content:"";
+        }
+        @media (min-width: 1200px) {
+            .text>h2 {
+                min-width: 50vw; /* some titles are so small on bigger screens, need to beef up so background-image doesn't get too small */
+            }
+        }
+        @media (max-width: 700px) {
+            .content {
+                max-width: 85vw;
+            }
+        }
+        @media (orientation: landscape) and (max-width: 820px) {
+            .content {
+                grid-template-rows: 1fr 1fr 1fr;
+                grid-template-columns: 1fr  1fr;
+                column-gap: 3rem;
+            }
+            .content::before, .content::after {
+                grid-column: 1 / -1;
+            }
+            .img {
+                grid-column: 1;
+            }
+        }
+
+    </style>
+</head>
+
+<script>
+    function symbol0() {
+            localStorage.AnswerSymbol = 0
+            checkAnswer()
+        }
+        function symbol1() {
+            localStorage.AnswerSymbol = 1
+            checkAnswer()
+        }
+        function symbol2() {
+            localStorage.AnswerSymbol = 2
+            checkAnswer()
+        }
+        function symbol3() {
+            localStorage.AnswerSymbol = 3
+            checkAnswer()
+        }
+        function symbol4() {
+            localStorage.AnswerSymbol = 4
+            checkAnswer()
+        }
+        function symbol5() {
+            localStorage.AnswerSymbol = 5
+            checkAnswer()
+        }
+        function symbol6() {
+            localStorage.AnswerSymbol = 6
+            checkAnswer()
+        }
+        function symbol7() {
+            localStorage.AnswerSymbol = 7
+            checkAnswer()
+        }
+        function symbol8() {
+            localStorage.AnswerSymbol = 8
+            checkAnswer()
+        }
+        function symbol9() {
+            localStorage.AnswerSymbol = 9
+            checkAnswer()
+        }
+        function symbol10() {
+            localStorage.AnswerSymbol = 10
+            checkAnswer()
+        }
+
+        var timestamp = [];
+
+        function checkAnswer() {
+            if (localStorage.phase == "firstPhase"){ 
+            imageNew.src = "images/blank.png";
+            } else {
+            imageNew_page5.src = "images/blank.png";
+            }
+            if (localStorage.AnswerSymbol == localStorage.symbolPic) {
+                console.log("CORRECT");
+                timestamp.push(Date.now());
+                if (localStorage.phase == "firstPhase"){ 
+                    localStorage.timeStamp = timestamp;
+                 } else {
+                    localStorage.timeStampLeft = timestamp;
+                 } 
+                //window.requestAnimationFrame(function(){
+                window.setTimeout(function(){
+                    if (localStorage.phase == "firstPhase"){
+                    localStorage.logMAR = Correct(0, Storage, 'coverEye.html?right', 'symbols/Pic');
+                    } else {
+                        localStorage.logMARLeft = Correct(1, Storage, 'email.html', 'symbols/Pic');
+                        localStorage.AnswerSymbol = 0;
+                    }
+                }, 100);
+                // return show("Page4","Page3")
+                /*console.log(localStorage.arrayPixels)*/
+            } else {
+                console.log("INCORRECT");
+                timestamp.push(Date.now());
+                if (localStorage.phase == "firstPhase"){ 
+                    localStorage.timeStamp = timestamp;
+                 } else {
+                    localStorage.timeStampLeft = timestamp;
+                 } 
+                window.setTimeout(function(){
+                    if (localStorage.phase == "firstPhase"){
+                    localStorage.logMAR = Incorrect(0, Storage, 'coverEye.html?right', 'symbols/Pic');
+                    } else {
+                        localStorage.logMARLeft = Incorrect(1, Storage, 'email.html', 'symbols/Pic');
+                        localStorage.AnswerSymbol = 0;
+                    }
+                }, 100);
+                // return show("Page4","Page3")
+            }
+            console.log("LOGMAR VALUE BELOW")
+            console.log(localStorage.logMAR)
+        }
+
+        // function checkAnswer() {
+        //     imageNew.src = "images/blank.png";
+        //     if (localStorage.AnswerSymbol == localStorage.symbolPic) {
+        //         console.log("CORRECT");
+        //         timestamp.push(Date.now());
+        //         localStorage.timeStamp = timestamp;
+        //         //window.requestAnimationFrame(function(){
+        //         window.setTimeout(function(){
+        //             localStorage.logMAR = Correct(0, Storage, 'coverEye.html?right', 'symbols/Pic');
+        //         }, 100);
+        //         // return show("Page4","Page3")
+        //         /*console.log(localStorage.arrayPixels)*/
+        //     } else {
+        //         console.log("INCORRECT");
+        //         timestamp.push(Date.now());
+        //         localStorage.timeStamp = timestamp;
+        //         window.setTimeout(function(){
+        //             localStorage.logMAR = Incorrect(0, Storage, 'coverEye.html?right', 'symbols/Pic');
+        //         }, 100);
+        //         // return show("Page4","Page3")
+        //     }
+        // }
+</script>
+
+<body style="display: flex">
+
+    <div id="Page1" class="centered">
+        
+        <script src="./virtual-keypad/dist/main.js"></script>
+        
+        <div id="displayQR"><p></p>
+        </div>
+        <div class="text"> 
+            <h2>Scan the QR Code on your smartphone<br> to load the keypad</h2>
+        </div>
+    
+        <button onclick="return show('Page2','Page1');">Start test</button>
+        <script>
+            if ( window.location !== window.parent.location ) { 
+              // The page is in an iframe, per https://tommcfarlin.com/check-if-a-page-is-in-an-iframe/
+              document.getElementById("info").style.display = "none";
+            } 
+            let keypad_options = {
+              // Specify a 'keypadUrl' field to redirect to a keypad hosted elsewhere
+              // FUTURE should be able to have a visual keypress or not from here
+              alphabet: [..."0123456789".split("")], // Set of symbols to display; array perfered
+              font: "OpenOptotypes", // Supported font, in which to display letters
+              targetElementId: "displayQR", // id of the the div where messages should be displayed
+              visualResponseFeedback: false,
+            };
+
+            let ondata_callback = (data) => {
+            //document.getElementById("displayQR").innerText += data.response;
+            console.log(data.response);
+            var answers = [8,4,2,1,9,3,5,6,7,10]
+
+            localStorage.AnswerSymbol = answers[data.response]
+            console.log(answers[data.response])
+            checkAnswer()
+            };
+
+            var receiver = new virtualKeypad.Receiver(
+              keypad_options,
+              ondata_callback
+            );
+
+
+          </script>        
+    </div>
+
+    <div id="Page2" class="centered" style="display:none">
+        
+        <section class="content">
+
+            <div class="img" id="ipar"><p></p>
+            </div>
+            <div class="text">
+                <h2>Cover your <span id="side">left</span> Eye!</h2>
+            </div>
+        </section>
+        
+         <script>
+
+            var targetNodePage2 = document.getElementById('Page2');
+            var observerPage2 = new MutationObserver(function(){
+                if(targetNodePage2.style.display != 'none'){
+                            
+                var nexturl = "test";
+                if (localStorage.letterorSymbol == "Letter")
+                    nexturl = "testLetter";
+                if (document.location.search == "?right")
+                {
+                    ipar.style.backgroundImage = "url(./images/instruct-10.svg)";
+                    side.textContent = "right";
+                    nexturl += "End";
+                } else {
+                   ipar.style.backgroundImage = "url(./images/instruct-7.svg)";
+                    setTimeout(function(){return show('Page3','Page2')},5000);
+                
+                }}
+                   
+            });
+
+            observerPage2.observe(targetNodePage2, { attributes: true, childList: true });
+
+        </script> 
+        
+    </div>
+
+    <div id="Page3" class="centered" style="display:none">
+    <section class="centered">
+        <div id="holdingImageStill" style="height:280px" style="text-align: center">
+            <img id="imageNew" src="letters/Pic1.svg" alt="" />
+
+
+        </div>
+    
+        <div>
+            <!-- <div class="contentTest">
+    
+                <button class="symbolButton" onclick="symbol8()">0</button>
+                <button class="symbolButton" onclick="symbol4()">1</button>
+                <button class="symbolButton" onclick="symbol2()">2</button>
+                <button class="symbolButton" onclick="symbol1()">3</button>
+                <button class="symbolButton" onclick="symbol9()">4</button>
+                <button class="symbolButton" onclick="symbol6()">7</button>
+                <button class="symbolButton" onclick="symbol7()">8</button>
+                <button class="symbolButton" onclick="symbol10()">9</button>
+                <button class="symbolButton" onclick="symbol3()">5</button>
+                <button class="symbolButton" onclick="symbol5()">6</button>  
+            </div> -->
+            <h1>Use the keypad to select the symbol.</h1>
+        </div>
+    
+    </section>
+
+
+
+    <script>
+
+        var targetNodePage3 = document.getElementById('Page3');
+        var observerPage3 = new MutationObserver(function(){
+            if(targetNodePage3.style.display != 'none'){
+
+        var imagesize = localStorage.arrayPixels.split(',');
+        var holdingImageStill = document.getElementById("holdingImageStill");
+        holdingImageStill.style = "width:" + imagesize[imagesize.length - 1] + "px"
+        var height = parseInt(imagesize[imagesize.length - 1], 10) + 20
+        holdingImageStill.style = "height:" + height + "px"
+        var random = Math.floor(Math.random() * 10) + 1;
+        var imageName = 'symbols/Pic' + random + '.svg';
+        var img = document.getElementById("imageNew");
+        localStorage.symbolPic = random
+        img.src = imageName;
+        img.style = "width:" + imagesize[imagesize.length - 2] + "px"
+
+        localStorage.LetterorSymbol = "Symbol"
+        localStorage.FirstStimulus = random
+        localStorage.FirstTrialNumber = 1
+        var FirstlogMar = 1.2 - (localStorage.countHighest) * 0.1 - 0.1
+        FirstlogMar = Math.round(FirstlogMar * 100) / 100;
+        localStorage.FirstlogMar = FirstlogMar
+        timestamp.push(Date.now())
+        console.log(timestamp)
+        }
+               
+        });
+
+        observerPage3.observe(targetNodePage3, { attributes: true, childList: true });
+
+    </script> 
+    </div>
+
+
+    <div id="Page4" class="centered" style="display:none">
+    
+        <section class="content">
+
+            <div class="img" id="ipar_page4"><p></p>
+            </div>
+            <div class="text">
+                <h2>Cover your <span id="side">right</span> Eye!</h2>
+            </div>
+        </section>
+        
+         <script>
+
+            var targetNodePage4 = document.getElementById('Page4');
+            var observerPage4 = new MutationObserver(function(){
+                if(targetNodePage4.style.display != 'none'){
+                            
+                // var nexturl = "test";
+                // if (localStorage.letterorSymbol == "Letter")
+                    // nexturl = "testLetter";
+                // if (document.location.search == "?right")
+                // {
+                    ipar_page4.style.backgroundImage = "url(./images/instruct-10.svg)";
+                    side.textContent = "right";
+              
+                // } else {
+                //    ipar.style.backgroundImage = "url(./images/instruct-7.svg)";
+                    setTimeout(function(){return show('Page5','Page4')},3000);
+                
+                // }}
+                }
+            });
+
+            observerPage4.observe(targetNodePage4, { attributes: true, childList: true });
+
+        </script> 
+        
+    </div>
+
+    <div id="Page5" class="centered" style="display:none">
+    <section class="centered">
+        <div id="holdingImageStill_page5" style="height:280px" style="text-align: center">
+            <img id="imageNew_page5" src="letters/Pic1.svg" alt="" />
+
+
+        </div>
+    
+        <div>
+            <!-- <div class="contentTest">
+    
+                <button class="symbolButton" onclick="symbol8()">0</button>
+                <button class="symbolButton" onclick="symbol4()">1</button>
+                <button class="symbolButton" onclick="symbol2()">2</button>
+                <button class="symbolButton" onclick="symbol1()">3</button>
+                <button class="symbolButton" onclick="symbol9()">4</button>
+                <button class="symbolButton" onclick="symbol6()">7</button>
+                <button class="symbolButton" onclick="symbol7()">8</button>
+                <button class="symbolButton" onclick="symbol10()">9</button>
+                <button class="symbolButton" onclick="symbol3()">5</button>
+                <button class="symbolButton" onclick="symbol5()">6</button>  
+            </div> -->
+            <h1>Use the keypad to select the symbol.</h1>
+        </div>
+
+
+        <script>
+            var targetNodePage5 = document.getElementById('Page5');
+            var observerPage5 = new MutationObserver(function(){
+            if(targetNodePage5.style.display != 'none'){
+
+            count = 0;
+            width = 200;
+            padding = 0;
+            choseLetter = 0;
+            choseSymbol = 0;
+            logMar = 0;
+            logMarLeft = 1.1;
+            onLine = 0;
+            correctinLine = 0;
+            totalinLine = 0;
+            specialCase = 0;
+            imageInLineArray = [1,2,3,4,5,6,7,8,9,10];
+            instructionCount = 0;
+            holdingLastElement = 0;
+            movedUpOnce = 0;
+            countLowest = 0;
+            countHighest = 0;
+            imagePixelArray = [];
+            initalisationCorrect = true
+            correctinLineLast = 0;
+            randomLastLine = 0;
+            sizeofImage = 0;
+            sizeofImageLast = 0;
+            TrialNumber = 1;
+            Stimulus = 0;
+            Response = 2;
+            StimulusAppend = [];
+            TrialNumberAppend = [];
+            logMarAppend = [];
+            ResponseAppend = [];
+
+
+            localStorage.phase = "secondPhase"
+            
+
+             imagesize = localStorage.arrayPixels.split(',');
+             holdingImageStill = document.getElementById("holdingImageStill_page5");
+             holdingImageStill.style = "width:" + imagesize[imagesize.length - 1] + "px"
+             height = parseInt(imagesize[imagesize.length - 1], 10) + 20
+             holdingImageStill.style = "height:" + height + "px"
+             random = Math.floor(Math.random() * 10) + 1;
+             imageName = 'symbols/Pic' + random + '.svg';
+             img = document.getElementById("imageNew_page5");
+            localStorage.symbolPic = random
+            img.src = imageName;
+            img.style = "width:" + imagesize[imagesize.length - 2] + "px"
+
+            localStorage.LetterorSymbol = "Symbol"
+            localStorage.FirstStimulusLeft = random
+            localStorage.FirstTrialNumberLeft = 1
+            var FirstlogMarLeft = 1.2 - (localStorage.countHighest) * 0.1 - 0.1
+            FirstlogMarLeft = Math.round(FirstlogMarLeft * 100) / 100;
+            localStorage.FirstlogMarLeft = FirstlogMarLeft
+
+            timestamp = [];
+            timestamp.push(Date.now())
+                }
+            });
+
+            observerPage5.observe(targetNodePage5, { attributes: true, childList: true });
+
+        </script>
+    
+    </section>
+    
+    
+    </div>
+
+    
+    <script src="assets/js/main.js"></script>
+    </body>
+    
+    </html>

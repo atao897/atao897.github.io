@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        body {
+            display: grid;
+        }
+        #mbox.m3>img {
+            width: 14.9517vw;
+        }
+        #mbox.m4>img {
+            width: 12.1535vw;
+        }
+        #mbox.m6>img {
+            width: 9.6489vw;
+        }
+        #mbox {
+            display: grid;
+            width: 60%;
+            max-width: 1200px;
+            grid-template-columns: 80px 1fr 1fr 1fr 126px;
+            margin: auto;
+            align-items: center;
+        }
+        #mbox.m3 {
+            grid-template-columns: 50px 1fr 1fr 1fr 76px;
+        }
+        #mbox.m4 {
+            grid-template-columns: 40px 1fr 1fr 1fr 61px;
+        }
+        #mbox.m6 {
+            grid-template-columns: 33px 1fr 1fr 1fr 46px;
+        }
+        #mbox.m3>#measureA4::before {
+            content: "10 x A4 sheet";
+        }
+        #mbox.m4>#measureA4::before {
+            content: "15 x A4 sheet";
+        }
+        #mbox.m6>#measureA4::before {
+            content: "20 x A4 sheet";
+        }
+        #mbox.m3>#measureA4 {
+            height: 38px;
+            background-size: 10% 100%;
+        }
+        #mbox.m4>#measureA4 {
+            height: 27px;
+            background-size: 6.66666% 100%;
+        }
+        #mbox.m6>#measureA4 {
+            height: 21px;
+            background-size: 5% 100%;
+        }
+        #screen {
+            justify-self: end;
+        }
+        #mbox>img {
+            width: 23vw;
+            transition: width 400ms ease;
+        }
+        #measureA4 {
+            grid-column: 2 / -2;
+            margin: 1rem 0;
+            /* height: 90px;
+            background-color: thistle; */
+            width: calc(100% - 2px); /* 297X200 */
+            height: 80px;/*calc(100% * 0.1333);*/
+            border: 2px solid;
+            color:var(--color-secondary);
+            background: linear-gradient(90deg, transparent calc(100% - 1px), currentColor calc(100% - 1px), currentColor 100%);
+            background-size: 20% 100%;
+            position: relative;
+            transition: 400ms ease;
+            transition-property: background-size, height;
+        }
+        #measureA4::before {
+            content: "5 x A4 sheet";
+            position: relative;
+            left: 1rem;
+            top: -1.5em;
+            color: black;
+            font-size: 2rem;
+            text-align: center;
+        }
+        .pill-group {
+            grid-column: 1 / -1;
+            justify-self: center;
+        }
+        .info {
+            padding: 0 1em;
+            text-align: center;
+            background-color: var(--color-light-1);
+            grid-column: 1 / -1;
+        }
+        .info>h2 {
+            margin: 0;
+        }
+        div.prog {
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        div.prog>i:nth-child(6) {
+            background-color: var(--color-primary);
+        }
+        div.prog>i {
+            display: inline-block;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            margin: 2px;
+            background-color: var(--color-light-2);
+        }
+        /*****************************/
+        .sheet {
+            box-sizing: border-box;
+            width: 20%;
+            height: 78px;
+            background-color: rgba(0,0,0,0.1);
+            color: #fefefe;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+        #mbox.m3>#measureA4>.sheet,#mbox.m4>#measureA4>.sheet,#mbox.m6>#measureA4>.sheet {
+            opacity: 0 !important;
+        }
+        .sheet::before {
+            content: "\A0""A4";
+            font-weight: bold;
+            font-size: 2vw;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        #sheet1,#sheet2 {
+            animation-fill-mode: both;
+            animation-timing-function: linear;
+            animation-duration: 3s;
+            animation-delay: 300ms;
+        }
+        #sheet1 {
+            animation-name: a1;
+        }
+        @keyframes a1 {
+            0%{ transform: translate(-5%, -100%); opacity: 0}
+            10%,20%{ transform: translate(0, 0); opacity: 1}
+            25%{ transform: translate(50%, -20%);}
+            30%{ transform: translate(100%, -30%);}
+            35%{ transform: translate(150%, -20%);}
+            40%,80%{ transform: translate(200%, 0);}
+            85%{ transform: translate(250%, -20%);}
+            90%{ transform: translate(300%, -30%);}
+            95%{ transform: translate(350%, -20%);}
+            to{ transform: translate(400%, 0); opacity: 1}
+        }
+        #sheet2 {
+            animation-name: a2;
+        }
+        @keyframes a2 {
+            0%{ transform: translate(-5%, -100%); opacity: 0}
+            10%,50%{ transform: translate(100%, 0); opacity: 1}
+            55%{ transform: translate(150%, -20%);}
+            60%{ transform: translate(200%, -30%);}
+            65%{ transform: translate(250%, -20%);}
+            70%,to{ transform: translate(300%, 0); opacity: 1}
+        }
+    </style>
+</head>
+<body>
+    <section id="mbox">
+        <img src="images/birds-eye-subject.svg" alt="Person seated">
+        <div></div>
+        <div></div>
+        <div></div>
+        <img id="screen" src="images/birds-eye-screen.svg" alt="Person seated">
+        <div id="measureA4">
+            <div class="sheet" id="sheet1"></div>
+            <div class="sheet" id="sheet2"></div>    
+        </div>
+        <div class="pill-group" data-name="Select Distance">
+                <label><input type="radio" name="distance" value="1.5"><svg viewBox="0 0 32 32" class="check"><path d="M4 16L9 20L19 6"></path></svg><span>1.5m</span></label>
+                <label><input type="radio" name="distance" value="3"><svg viewBox="0 0 32 32" class="check"><path d="M4 16L9 20L19 6"></path></svg><span>3m</span></label>
+                <label><input type="radio" name="distance" value="4.5"><svg viewBox="0 0 32 32" class="check"><path d="M4 16L9 20L19 6"></path></svg><span>4.5m</span></label>
+                <label><input type="radio" name="distance" value="6"><svg viewBox="0 0 32 32" class="check"><path d="M4 16L9 20L19 6"></path></svg><span>6m</span></label>
+        </div>
+        <div class="info">
+            <h2>Measure the distance</h2>
+            <p>They need to be seated as far away as possible at one of these distances. Click your choice then use either a tape measure or the A4 sheets to measure the distance to the screen.</p>
+            <div class="prog">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><button>Next</button>
+            </div>
+            
+        </div>
+    </section>
+    <script src="assets/js/main.js"></script>
+    <script>
+        var inps = Array.apply(null, document.querySelectorAll("input[name=distance]"));
+        inps.forEach( function(e){e.addEventListener("click", distanceSelect)});
+        inps[0].click.call(inps[0]); // default to first option
+        inps[0].addEventListener("click", function(e){mbox.classList = []});
+        inps[1].addEventListener("click", function(e){mbox.classList = []; mbox.classList.add("m3")});
+        inps[2].addEventListener("click", function(e){mbox.classList = []; mbox.classList.add("m4")});
+        inps[3].addEventListener("click", function(e){mbox.classList = []; mbox.classList.add("m6")});
+        function distanceSelect(e){
+            localStorage.distance = this.value;
+        }
+        function continued() {
+            var param = document.location.search;
+            var nextFunc = (param=="?child")?"startTest":"startTestLetter";
+            window[nextFunc]();
+        }
+    </script>
+    </body>
+</html>
+

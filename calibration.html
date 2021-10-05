@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        h3 {padding: 0 0.5em;}
+        @media (orientation: landscape) {
+            section.centered {
+                display: grid;
+                grid-template-columns: 140px 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body style="display: flex">
+    <section class="centered">
+        <div>
+            <button id="increaseButton" style="background-color:green">Increase</button>
+            <button  id="decreaseButton" style="background-color:red">Decrease</button>
+        </div>
+        
+        <div class="image" id="symbolContainer">
+            <img id="creditCardImage" src="images/creditCard.png" style="width:200px" alt=""/>
+        </div>
+        <div>
+            <h3>To help us calculate the size of your display please place your credit card against the image and increase or decrease its size until you can just see the blue image.</h3>
+            <button class = "buttonNext" onclick="continued()">Continue</button>
+        </div>
+    </section>
+    <script src="assets/js/main.js"></script>
+    <script>
+        function continued() {
+            var param = document.location.search;
+            var nextFunc = (param=="?child")?"continueTest":"continueTestLetter";
+            window[nextFunc]();
+        }
+        [increaseButton,decreaseButton].forEach(function(b){
+            b.addEventListener("click", function(e){
+                e.preventDefault();
+                if (this == increaseButton)
+                    Increase();
+                else
+                    Decrease();
+            });
+        });
+    </script>
+
+    </body>
+</html>
+

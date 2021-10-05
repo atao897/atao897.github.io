@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        #mbox.m3>img {
+            width: 16.613vw;
+        }
+        #mbox.m4>img {
+            width: 13.504vw;
+        }
+        #mbox.m6>img {
+            width: 10.721vw;
+        }
+        #mbox {
+            display: grid;
+            width: 80%;
+            grid-template-columns: 120px 1fr 1fr 1fr 190px;
+            margin: auto;
+            align-items: center;
+        }
+        #screen {
+            justify-self: end;
+        }
+        #mbox>img {
+            width: 28vw;
+            transition: width 400ms ease;
+        }
+        #measureA4 {
+            grid-column: 2 / -2;
+            /* height: 90px;
+            background-color: thistle; */
+            width: calc(100% - 2px); /* 297X200 */
+            height: 120px;/*calc(100% * 0.1333);*/
+            border: 2px solid;
+            background: linear-gradient(90deg, transparent 99%, currentColor 99%, currentColor 100%);
+            background-size: 20% 100%;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <section id="mbox">
+        <img src="images/birds-eye-subject.svg" alt="Person seated">
+        <div></div>
+        <div></div>
+        <div></div>
+        <img id="screen" src="images/birds-eye-screen.svg" alt="Person seated">
+        <div id="measureA4"></div>
+    </section>
+    <section>
+    <div class="pill-group" data-name="Select Distance">
+            <label><input type="radio" name="distance" value="1.5"><svg viewBox="0 0 32 32" class="check"><path d="M4 16L9 20L19 6"></path></svg><span>1.5m</span></label>
+            <label><input type="radio" name="distance" value="3"><svg viewBox="0 0 32 32" class="check"><path d="M4 16L9 20L19 6"></path></svg><span>3m</span></label>
+            <label><input type="radio" name="distance" value="4.5"><svg viewBox="0 0 32 32" class="check"><path d="M4 16L9 20L19 6"></path></svg><span>4.5m</span></label>
+            <label><input type="radio" name="distance" value="6"><svg viewBox="0 0 32 32" class="check"><path d="M4 16L9 20L19 6"></path></svg><span>6m</span></label>
+        </div>
+        <button class = "buttonNext" onclick="continued()">Start Test</button>
+    </section>
+    <script src="assets/js/main.js"></script>
+    <script>
+        var inps = Array.apply(null, document.querySelectorAll("input[name=distance]"));
+        inps.forEach( function(e){e.addEventListener("click", distanceSelect)});
+        inps[0].click.call(inps[0]); // default to first option
+        inps[0].addEventListener("click", function(e){mbox.classList = []});
+        inps[1].addEventListener("click", function(e){mbox.classList = []; mbox.classList.add("m3")});
+        inps[2].addEventListener("click", function(e){mbox.classList = []; mbox.classList.add("m4")});
+        inps[3].addEventListener("click", function(e){mbox.classList = []; mbox.classList.add("m6")});
+        function distanceSelect(e){
+            localStorage.distance = this.value;
+        }
+        function continued() {
+            var param = document.location.search;
+            var nextFunc = (param=="?child")?"startTest":"startTestLetter";
+            window[nextFunc]();
+        }
+    </script>
+    </body>
+</html>
+

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        h3 {padding: 0 0.5em;}
+        #holdingImageStill {
+            display: flex;
+        }
+        #imageNew {
+            margin: auto;
+        }
+        .contentTest {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(1em, 1fr));
+            grid-template-rows: 1fr 1fr;
+            grid-gap: 0.5em;
+            justify-items: center;
+        }
+        @media (min-width: 800px){
+            .contentTest {
+                grid-template-columns: repeat(10, 1fr);
+                grid-template-rows: 1fr;
+
+            }
+        }
+        @media (orientation: landscape) and (max-height: 767px) {
+            section.centered {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                justify-items: start;
+            }
+            #holdingImageStill {
+                height: unset !important;
+            }
+        }
+    </style>
+</head>
+<body style="display: flex">
+    <section class="centered">
+        <div id="holdingImageStill" style="height:280px" style="text-align: center">
+            <img id="imageNew" src="letters/Pic1.svg" alt="" />
+        </div>
+
+        <div>
+            <div class="contentTest">
+
+                <button class="letterButton" onclick="symbolD()">D</button>
+                <button class="letterButton" onclick="symbolH()">H</button>
+                <button class="letterButton" onclick="symbolK()">K</button>
+                <button class="letterButton" onclick="symbolN()">N</button>
+                <button class="letterButton" onclick="symbolO()">O</button>
+                <button class="letterButton" onclick="symbolR()">R</button>
+                <button class="letterButton" onclick="symbolS()">S</button>
+                <button class="letterButton" onclick="symbolT()">T</button>
+                <button class="letterButton" onclick="symbolV()">V</button>
+                <button class="letterButton" onclick="symbolZ()">Z</button>
+
+            </div>
+            <h1>Click/tap the patient's choice</h1>
+        </div>
+    </section>
+
+    <script>
+        function symbolD() {
+            localStorage.AnswerSymbol = 1
+            checkAnswer()
+        }
+        function symbolH() {
+            localStorage.AnswerSymbol = 2
+            checkAnswer()
+        }
+        function symbolK() {
+            localStorage.AnswerSymbol = 3
+            checkAnswer()
+        }
+        function symbolN() {
+            localStorage.AnswerSymbol = 4
+            checkAnswer()
+        }
+        function symbolO() {
+            localStorage.AnswerSymbol = 5
+            checkAnswer()
+        }
+        function symbolR() {
+            localStorage.AnswerSymbol = 6
+            checkAnswer()
+        }
+        function symbolS() {
+            localStorage.AnswerSymbol = 7
+            checkAnswer()
+        }
+        function symbolT() {
+            localStorage.AnswerSymbol = 8
+            checkAnswer()
+        }
+        function symbolV() {
+            localStorage.AnswerSymbol = 9
+            checkAnswer()
+        }
+        function symbolZ() {
+            localStorage.AnswerSymbol = 10
+            checkAnswer()
+        }
+        function symbol0() {
+            localStorage.AnswerSymbol = 0
+            checkAnswer()
+        }
+
+        function checkAnswer() {
+            imageNew.src = "images/blank.png";
+            if (localStorage.AnswerSymbol == localStorage.symbolPic) {
+                console.log("CORRECT");
+                timestamp.push(Date.now());
+                localStorage.timeStamp = timestamp
+                window.setTimeout(function(){
+                    localStorage.logMAR = Correct(0, Storage, 'coverEye.html?right', 'letters/Pic')
+                    localStorage.AnswerSymbol = 0
+                }, 100);
+            } else {
+                console.log("INCORRECT")
+                timestamp.push(Date.now())
+                localStorage.timeStamp = timestamp
+                window.setTimeout(function(){
+                    localStorage.logMAR = Incorrect(0, Storage, 'coverEye.html?right', 'letters/Pic')
+                    localStorage.AnswerSymbol = 0
+                }, 100);
+            }
+        }
+    </script>
+
+    <script>
+        var imagesize = localStorage.arrayPixels.split(',');
+        var holdingImageStill = document.getElementById("holdingImageStill");
+        holdingImageStill.style = "width:" + imagesize[imagesize.length - 1] + "px"
+        var height = parseInt(imagesize[imagesize.length - 1], 10) + 20
+        holdingImageStill.style = "height:" + height + "px"
+        var random = Math.floor(Math.random() * 10) + 1;
+        var imageName = 'letters/Pic' + random + '.svg';
+        var img = document.getElementById("imageNew");
+        localStorage.symbolPic = random
+        img.src = imageName;
+        img.style = "width:" + imagesize[imagesize.length - 2] + "px"
+
+        localStorage.LetterorSymbol = "Letter"
+        localStorage.FirstStimulus = random
+        localStorage.FirstTrialNumber = 1
+        var FirstlogMar = 1.2 - (localStorage.countHighest) * 0.1 - 0.1
+        FirstlogMar = Math.round(FirstlogMar * 100) / 100;
+        localStorage.FirstlogMar = FirstlogMar
+
+        var timestamp = [];
+        timestamp.push(Date.now())
+    </script>
+    <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

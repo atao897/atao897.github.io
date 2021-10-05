@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        h3 {padding: 0 0.5em;}
+        #title {
+            grid-column: 1 / 4;
+        }
+        @media (orientation: landscape) {
+            section.centered {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body style="display: flex">
+    <section class="centered">
+        <h1 id="title">Sit Down</h1>
+    
+        <div class="image" id="symbolContainer">
+            <img id="InstructionImage" src="images/sittingDown.png" style="width:200px" alt="" />
+        </div>
+    
+    
+        <div>
+           <h3 id="contentInstruction">The person being tested needs to sit down.</h3>
+           <button class="buttonNext" id="nextButton" onclick="continueInstruction()">Next</button>
+        </div>
+    
+    
+    
+        <div style="margin-top:10px">
+            
+        </div>
+    
+    
+    </section>
+    
+    <script>
+        var param = document.location.search;
+        var nextUrl = (param=="?child")?"calibration.html"+param:"calibration.html";
+        function continueInstruction() {
+            if (instructionCount == 1) {
+                console.log("HELLO")
+                window.location.href = nextUrl;
+            }
+
+            var image = document.getElementById("InstructionImage");
+            image.src = "images/eyelevel.jpg"
+            var body = document.getElementById("contentInstruction");
+            var title = document.getElementById("title");
+            var button = document.getElementById("nextButton")
+            title.textContent = "Eye Level"
+            body.textContent = "Position the device so it is at eye level for the person being tested."
+            instructionCount = 1
+        }
+
+    </script>
+    
+    <script src="assets/js/main.js"></script>
+    
+    </body>
+    
+    </html>

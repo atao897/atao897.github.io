@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        label {
+            margin-inline: auto;
+        }
+        @media (orientation: landscape) and (max-height: 767px) {
+            section.centered {
+                display: grid;
+                grid-gap: 0.5em;
+                grid-template-columns: 2fr 3fr;
+                justify-items: center;
+                align-items: center;
+            }
+            #holdingImageStill {
+                height: unset !important;
+            }
+        }
+        #copypaste {
+            overflow-x: hidden;
+            text-align: left;
+        }
+    </style>
+</head>
+<body style="display: flex">
+    <section class="centered">
+        <div>
+            <h1>Your Results: </h1>
+            <div id="ViewingDistance"></div>
+            <div id="LeftEye"></div>
+            <div id="RightEye"></div>
+            <hr/>
+            <div class="pill-group">
+                <label><input type="checkbox" name="dataShare" id="dataShare"><svg viewBox="0 0 32 32" class="check"><path d="M4 16L9 20L19 6"></path></svg><span>Data share with myacuity.org</span></label>
+            </div>
+        </div>
+        <div>
+                Our test is free but we rely on your (de-identified) results to improve it! If this is OK with you, tick the "Data share" box. 
+                <hr/><button class = "buttonNext" onclick="sendEmail()">Send Email</button>
+                <h4><em>If this button doesn’t work please send the following message using your email program <span id="emailTo"></span> </em></h4>
+                <pre id="copypaste"></pre>
+        </div>
+
+            <script>
+//                    var textbox = document.getElementById("pixelpercm");
+                if (localStorage.email)
+                    document.getElementById("emailTo").textContent = "to "+localStorage.email;
+                var textbox1 = document.getElementById("ViewingDistance");
+                var textbox2 = document.getElementById("LeftEye");
+                var textbox3 = document.getElementById("RightEye");
+                // var textbox4 = document.getElementById("MaxLogMar");
+                // var textbox5 = document.getElementById("MinLogMar");
+                var MaxLogMar =  Math.round((1.2 - (localStorage.countHighest)*0.1)*10)/10
+                var MinLogMar = Math.round((-0.1+ (localStorage.countLowest)*0.1)*10)/10
+                /*textbox.innerHTML = "Pixel/cm: " + localStorage.PixelPerCm + "px/cm"*/
+                textbox1.innerHTML = "Viewing Distance: " + localStorage.distance + "m";
+                textbox2.innerHTML = "Right Eye: " + localStorage.logMAR + " logMAR";
+                textbox3.innerHTML = "Left Eye: " + localStorage.logMARLeft + " logMAR";
+                // textbox4.innerHTML = "MaxLogMar: " + MaxLogMar + " logMAR";
+                // textbox5.innerHTML = "MinLogMar: " + MinLogMar + " logMAR";
+            </script>
+            
+            <script>
+                var MaxLogMar =  Math.round((1.2 - (localStorage.countHighest)*0.1)*10)/10
+                var MinLogMar = Math.round((-0.1+ (localStorage.countLowest)*0.1)*10)/10
+                var leftEyeTimeStamp = localStorage.timeStampLeft.split(',')
+                var leftEyeTimeDiff = [];
+                for (var i = 1; i < leftEyeTimeStamp.length; i++) {
+                    leftEyeTimeDiff.push(leftEyeTimeStamp[i] - leftEyeTimeStamp[i-1])
+                }
+                
+                var rightEyeTimeStamp = localStorage.timeStamp.split(',')
+                var rightEyeTimeDiff = [];
+                for (var i = 1; i < rightEyeTimeStamp.length; i++) {
+                    rightEyeTimeDiff.push(rightEyeTimeStamp[i] - rightEyeTimeStamp[i-1])
+                }
+                
+                var leftEye = "Left Eye" + "%0D%0A" + "Trial: " + localStorage.TrialNumberAppendLeft + "%0D%0A" + "Stimulus: " +  localStorage.StimulusAppendLeft + "%0D%0A" + "LogMAR: " + localStorage.logMarAppendLeft + "%0D%0A" + "Response: " + localStorage.ResponseAppendLeft + "%0D%0A" + "Time(ms): " + leftEyeTimeDiff
+                
+                var rightEye = "Right Eye" + "%0D%0A" + "Trial: " + localStorage.TrialNumberAppend + "%0D%0A" + "Stimulus: " +  localStorage.StimulusAppend + "%0D%0A" + "LogMAR: " + localStorage.logMarAppend + "%0D%0A" + "Response: " + localStorage.ResponseAppend + "%0D%0A" + "Time(ms): " + rightEyeTimeDiff
+                
+                var body = localStorage.LetterorSymbol + "%0D%0A" + localStorage.PixelPerCm + " px/cm" + "%0D%0A" + "%0D%0A" +  rightEye + "%0D%0A" + "%0D%0A" + leftEye ;
+
+                var subject = "Viewing Distance: " + localStorage.distance + " Right Eye: " + localStorage.logMAR + " Left Eye: " + localStorage.logMARLeft + " MaxLogMAR: " +  MaxLogMar + " MinLogMAR: " + MinLogMar
+
+                copypaste.textContent = decodeURIComponent(subject+"%0D%0A"+body);
+
+                copypaste.onclick = function(e){
+                    var sel = window.getSelection();
+                    var el = this;
+                    if (sel.toString()==""){
+                        setTimeout(function(){
+                            var range = document.createRange();
+                            range.selectNodeContents(el);
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                        },1);
+                    }
+                }
+
+                function sendEmail(){
+                    if (localStorage.email != "") {
+                        email = localStorage.email
+                    } else {
+                        email = "undefined"
+                    }
+                    
+                    if (document.getElementById("dataShare").checked == true){
+                        cc = "myacuityresult@gmail.com"
+                    } else {
+                        cc = " "
+                    }
+                    
+                    
+                    window.location.href = "mailto:" + email + "?cc=" + cc + "&subject=" + subject + "&body=" + body
+                }
+            </script>
+        <script src="assets/js/main.js"></script>
+
+    </body>
+</html>
+

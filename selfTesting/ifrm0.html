@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        body {
+            display: grid;
+        }
+        section {
+            text-align: center;
+            margin: auto;
+        }
+        .wrap {
+            display: grid;
+            grid-gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+        .card {
+            box-shadow: 4px 4px 8px 4px rgba(0,0,0,0.25);
+            border-radius: 6px;
+            padding: 0.66rem;
+        }
+        .card>h2 {
+            margin:0;
+        }
+        .card>img {
+            width: 33%;
+        }
+        .card>img+img {
+            width: 25%;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <div class="wrap">
+            <div class="card"><img src="images/car.png" alt="car"><img src="symbols/Pic2.png" alt="" ><h2>car, truck</h2></div>
+                <div class="card"><img src="images/butterfly.png" alt="butterfly"><img src="symbols/Pic1.png" alt="" ><h2>butterfly</h2></div>
+                <div class="card"><img src="images/moon.png" alt="moon"><img src="symbols/Pic11.png" alt="" ><h2>moon, pacman</h2></div>
+                <div class="card"><img src="images/flower.png" alt="flower"><img src="symbols/Pic4.png" alt="" ><h2>flower</h2></div>
+                <div class="card"><img src="images/duck.png" alt="duck"><img src="symbols/Pic3.png" alt="" ><h2>duck</h2></div>
+                <div class="card"><img src="images/rocket.png" alt="rocket"><img src="symbols/Pic9.png" alt="" ><h2>rocket, spaceship</h2></div>
+                <div class="card"><img src="images/heart.png" alt="heart"><img src="symbols/Pic5.png" alt="" ><h2>heart</h2></div>
+                <div class="card"><img src="images/house.png" alt="house"><img src="symbols/Pic6.png" alt="" ><h2>house</h2></div>
+                <div class="card"><img src="images/bunny.png" alt="bunny"><img src="symbols/Pic8.png" alt="" ><h2>rabbit, bunny</h2></div>
+                <div class="card"><img src="images/tree.png" alt="tree"><img src="symbols/Pic10.png" alt="" ><h2>tree, brocolli</h2></div>
+            </div>
+        </div>
+    </section>
+    </body>
+</html>
+

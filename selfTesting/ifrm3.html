@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        body {
+            display: grid;
+        }
+        #symbolContainer {
+            float: left;
+        }
+        path {
+            fill: currentColor;
+            stroke: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <div class="image" id="symbolContainer">
+            <img id="creditCardImage" src="images/creditCard.png" style="width:200px" alt="Credit card"/>
+        </div>
+        <div class="butpan">
+            <button onclick="Increase()"><svg viewbox="0 0 48 48" width="16"><path d="M 20,5 V 20 H 5 v 8 h 15 v 15 h 8 V 28 H 43 V 20 H 28 V 5 Z"></path></svg> Increase</button>
+            <button onclick="Decrease()"><svg viewbox="0 0 48 48" width="16"><path d="M5 22L44 22 44 30 5 30z"></path></svg> Decrease</button>
+        </div>
+    </section>
+    <script src="assets/js/main.js"></script>
+    <script>
+        function SetBeforeNext(){
+            var creditCard = document.getElementById("creditCardImage");
+            var length = creditCard.style.width;
+            var width = parseFloat(length,10) * 1.5939;
+            var PixelPerCm = width/8.5;
+            localStorage.PixelPerCm = Math.floor(PixelPerCm);
+            var MinPermissiblelogMAR = -0.1;
+            var MinLetterSizePixels = 5;
+            if (localStorage.letterorSymbol == "Symbol")
+                MinLetterSizePixels = 8;
+            var MinPermissLetterSizeArcMin= (Math.pow(10,MinPermissiblelogMAR) * 5);
+            var MinPermissLetterSizeCm = MinLetterSizePixels/PixelPerCm;
+            var intermediate = MinPermissLetterSizeCm/2;
+            var intermediate1 = Math.tan((3.14/180)*(1/60)* MinPermissLetterSizeArcMin/2);
+            var LetterViewingDistance = intermediate/intermediate1;
+            localStorage.LetterViewingDistance = Math.floor(LetterViewingDistance);
+        }
+    </script>
+    </body>
+</html>
+

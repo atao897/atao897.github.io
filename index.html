@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <script>
+        var email = document.location.hash.slice(1);
+        var reValid = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if (reValid.test(email))
+            localStorage.email = email;
+        else
+            document.location = "register.html";
+    </script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <img alt="UoA logo" src="images/logo.svg">
+        <div><h1>MyAcuity</h1><h3>A simple vision test for home use</h3></div>
+    </header>
+    
+    <section id="main">
+        <div id="container">
+        <button class = "buttonNext" style="display: inline-block;margin-right: 20px;" onclick="StartLettertest_self()">Test for Adults (Letters) <br>Self Administered<br></button>
+        <button class = "buttonNext" style="display: inline-block;margin-left: 20px;" onclick="StartLettertest()">Test for Adults (Letters)<br>2 People Required<br></button>
+        </div>
+        <div id="container">
+        <button class = "buttonNext" onclick="StartSymboltest_self()">Test for Children (Symbols)<br>Self Administered<br></button>
+        <button class = "buttonNext" onclick="StartSymboltest()">Test for Children (Symbols)<br>2 People Required<br></button>
+        </div>
+        <h3>By Taore, Sayer, Philips, Staples & Dakin</h3>
+    </section>
+    <footer>
+        <a rel="noopener" href="https://www.auckland.ac.nz/en/admin/footer-links/copyright.html" target="_blank">Copyright </a>
+        <span>|</span>
+        <a rel="noopener" href="https://www.auckland.ac.nz/en/admin/footer-links/privacy.html" target="_blank">Privacy </a>
+        <span>|</span>
+        <a rel="noopener" href="https://www.auckland.ac.nz/en/admin/footer-links/disclaimer.html" target="_blank">Disclaimer</a>
+</footer>
+<script src="assets/js/main.js"></script>
+<script nomodule="">
+    main.innerHTML = "<h1>Sorry, My Acuity will not work with this browser.</h1>"
+</script>
+<script>
+    var email = document.location.hash.slice(1);
+    var reValid = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (reValid.test(email))
+        localStorage.email = email;
+    else
+        document.location = "register.html";
+</script>
+</body>
+</html>

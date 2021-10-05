@@ -1,0 +1,285 @@
+/*  minimal css for generic uoa application
+    Ian Sayer: 28/11/2019
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+@font-face {
+    font-family: "National";
+    src: url("https://cdn.auckland.ac.nz/aem/etc/designs/uoa-digital/clientlibs/css/base/fonts/NationalWeb-Book.woff2");
+  }
+  
+  @font-face {
+    font-family: "National";
+    src: url("https://cdn.auckland.ac.nz/aem/etc/designs/uoa-digital/clientlibs/css/base/fonts/NationalWeb-BookItalic.woff2");
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: "National";
+    src: url("https://cdn.auckland.ac.nz/aem/etc/designs/uoa-digital/clientlibs/css/base/fonts/NationalWeb-Bold.woff2");
+    font-weight: bold;
+  }
+  
+  :root {
+    font-family: "National", sans-serif;
+    font-size: 17px;
+    --color-primary: #00467f;
+    --color-secondary: #009ac7;
+    --color-tertiary: #8d9091;
+    --color-medium: #d9d9d9;
+    --color-light-1: #f2f2f2;
+    --color-light-2: #bec3c4;
+    --color-success: #2ec95c;
+    --color-warning: #fdd835;
+    --color-error: #ed0c0c;
+    color: var(--color-primary);
+    fill: var(--color-primary);
+    stroke: var(--color-primary);
+    font-variant-numeric: lining-nums;
+  }
+  
+  body,
+  html {
+    margin: 0;
+    height: 100%;
+  }
+  header {
+    background: linear-gradient( #f2f2f2 103px, transparent 103px);
+    padding: 8px 1rem 1rem 1rem;
+    display: -ms-flex;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  header h3 {
+    margin: 0;
+  }
+  header h1 {
+    display: inline-block;
+    font-size: 2.8em;
+    color: #747778;
+    margin-top: 0;
+  }
+  header>img {
+    width: 122px;
+    height: 122px;
+    margin: 0 1.2rem;
+  }
+
+  header+section>h3 {
+    margin: 0;
+    padding:  4px 12px;
+    background: rgba(255,255,255,0.75);
+  }
+  header+section {
+    background-image: url(../../images/indexImage.jpeg);
+    background-size: cover;
+    min-height: 54vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    text-align: center;
+    background-color: var(--color-light-1);
+  }
+  footer>span{
+    color: var(--color-medium);
+  }
+  footer>a:hover{
+    text-decoration: underline;
+  }
+  footer>a{
+    color: var(--color-primary);
+    line-height: 2;
+    margin: 0 1.2em;
+    text-decoration: none;
+  }
+
+  .centered {
+    margin: auto;
+    text-align: center;
+    max-width: 800px;
+  }
+
+  #container{
+    text-align: center;
+}
+     
+  button {
+      font: inherit;
+      font-weight: bold;
+      border-radius: 32px;
+      border: none;
+      background-color: var(--color-primary);
+      color: var(--color-light-1);
+      padding: 1.2em 2em;
+      width: fit-content;
+      margin: 0.5em;
+      cursor: pointer;
+      touch-action: manipulation;
+  }
+  button:focus,
+  .pill-group>label>input:focus + span,
+  input.switch:focus+label::before {
+      outline: none;
+      box-shadow: 0 2px 4px 2px rgba(0,0,0,0.125);
+    }
+  
+/* radio & checkbox (wrapped with group) */
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+.pill-group>label {
+  cursor: pointer;
+  position: relative;
+}
+.pill-group>label>input {
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  top: -50em;
+}
+
+.pill-group>label span {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.375em;
+  margin-right: 0.375em;
+  padding: 0.375em 0.75em 0.375em 0.375em;
+  border-radius: 99em;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  transition: 0.25s ease;
+}
+.pill-group>label>input:checked + span, .pill-group>label>span:hover {
+background-color: var(--color-light-1);
+}
+.pill-group>label>span:before {
+display: flex;
+flex-shrink: 0;
+content: "";
+background-color: #fff;
+color: var(--color-secondary);
+width: 1.6em;
+height: 1.6em;
+border-radius: 4px;;
+margin-right: 0.375em;
+border: 2px solid;
+}
+.pill-group>label>input[type="radio"]+svg+span {
+  border-top-left-radius: 99em;
+  border-bottom-left-radius: 99em;
+}
+
+svg.check {
+  width: 32px;
+  fill:none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  position: absolute;
+  left: 8.5px;
+  top: 7px;
+}
+svg.check>path {
+  stroke-dasharray: 26.6;
+  stroke-dashoffset: 28;
+  transition: stroke-dashoffset 200ms ease;
+}
+.pill-group>label input:checked + svg > path {
+  stroke-dashoffset: 0;
+}
+
+/* simple switch */
+
+  input.switch {
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+  
+  input.switch + label {
+    position: relative;
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  input.switch + label::before {
+    content: "";
+    display: inline-block;
+    width: 51px;
+    height: 31px;
+    border-radius: 20px;
+    background: linear-gradient(90deg, var(--color-secondary) 50%, var(--color-medium) 50%);
+    background-size: 200%;
+    background-position-x: -100%;
+    border: 2px solid var(--color-light-2);
+    transition: background-position-x 0.3s cubic-bezier(0, 1, 1, 1);
+    margin-right: 0.5em;
+  }
+  
+  input.switch + label::after {
+    content: "";
+    border: 2px solid var(--color-light-2);
+    position: absolute;
+    left: 1px;
+    display: inline-block;
+    width: 31px;
+    height: 31px;
+    border-radius: 1em;
+    background-color: rgba(255,255,255,0.75);
+    transition: transform 0.3s cubic-bezier(0, 1.1, 1, 1.1);
+    transition-property: transform, border-color;
+  }
+  
+  input.switch:checked + label::after {
+    transform: translateX(18px);
+    border-color: var(--color-secondary);
+  }
+  
+  input.switch:checked + label::before {
+    background-position-x: -200%;
+  }
+
+  /* app specific */
+@font-face{
+  src: url(Optotypes.ttf);
+  font-family: symbols;
+}
+@font-face{
+  src: url(Optician-Sans.ttf);
+  font-family: letters;
+}
+
+  .symbolButton, .letterButton {
+    background-color: var(--color-light-1);
+    border: none;
+    border-radius: 0;
+    color: rgba(0, 0, 0, 0.25);
+    padding: 0;
+    margin:0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: symbols;
+    font-size: 55px;
+    position:relative;
+    cursor: pointer;
+  }
+   
+  .letterButton {
+    font-size: 70px;
+    font-family: letters;
+  }
+   

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+	<link rel="stylesheet" href="assets/css/styles.css">
+	<style>
+		.centered {
+			display: grid;
+			grid-template-rows: minmax(0, 1fr) max-content 1fr max-content 1fr max-content;
+			justify-items: center;
+			min-height: 50vh;
+		}
+		h4, p {
+			margin:0;
+		}
+		input {
+			padding: 6px;
+		}
+	</style>
+</head>
+<body>
+    <header>
+        <img alt="UoA logo" src="images/logo.svg">
+        <div><h1>MyAcuity</h1><h3>Administration Page</h3></div>
+    </header>
+<div class="centered">
+	<p></p>
+	<h2>Welcome.</h2><h4>Myacuity.org runs a simple vision test. To start, please enter the email address you want results to be sent to.</h4>
+	<p></p>
+	<label>Email: <input type="text" autofocus="true" id="emailRegister" name="emailRegister" placeholder="Please enter a valid email"></label>
+	<p></p>
+	<h4>Next choose either "Take test now", or if you are a clinician who needs a patient to take the test later, choose "Make a link".</h4>
+	<hr/>
+	<p>The link-option allows a patient to take the test and have results sent to the address you entered. Note that the results-message contains no identifying data aside from the patient’s email address.</p>
+	<hr/>
+
+	<button onclick="TakeTest()">Take test now</button>
+	<button onclick="Register()">Make a link</button>
+</div>
+
+<footer>
+	<a rel="noopener" href="https://www.auckland.ac.nz/en/admin/footer-links/copyright.html" target="_blank">Copyright </a>
+	<span>|</span>
+	<a rel="noopener" href="https://www.auckland.ac.nz/en/admin/footer-links/privacy.html" target="_blank">Privacy </a>
+	<span>|</span>
+	<a rel="noopener" href="https://www.auckland.ac.nz/en/admin/footer-links/disclaimer.html" target="_blank">Disclaimer</a>
+</footer>
+<script>
+	function Register() {
+		if (document.getElementById("emailRegister").value != "") {
+			var emailaddress = document.getElementById("emailRegister").value;
+			var path = document.location.href.split("/").slice(0,-1).join("/")+"/%23";
+			var email = emailaddress
+			var subject = "MyAcuity Link"
+			var body = "Here is your pre-populated link. Store it by either copying the link or sending it to an accessible email address. %0D%0A" + path + emailaddress
+
+			window.location.href = "mailto:" + email + "?subject=" + subject + "&body=" + body
+		} else {
+			alert("Please enter a valid email");
+		}
+	}
+	function TakeTest(){
+		var email = emailRegister.value || "noemail@myacuity.org";
+		document.location = "index.html#"+email;
+	}
+</script>
+
+</body>
+
+</html>
+			

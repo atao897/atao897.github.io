@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acuity Test</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        body {
+            display: grid;
+        }
+        section {
+            text-align: center;
+            max-width: 1000px;
+            margin: auto;
+        }
+        @media (min-width: 600px)  {
+            section {
+                display:flex;
+                align-items: center;
+            }
+            .butpan {
+                align-self: flex-end;
+                justify-self: left;
+            }
+        }
+        @media (min-width: 768px)  {
+            section {
+                display:grid;
+                grid-template-columns: 1fr 1fr;
+                grid-gap: 1rem;
+            }
+            .info {
+                grid-column: span 2;
+            }
+        }
+        .info {
+            padding: 0 1em;
+            text-align: center;
+            background-color: var(--color-light-1);
+        }
+        .info>h2 {
+            margin: 0;
+        }
+        ol {
+            list-style-type: none;
+            padding-left: 18px;
+            text-align: left;
+            max-width: 600px;
+            margin-bottom: 0;
+        }
+        li {
+            position: relative;
+        }
+        div.prog {
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        div.prog>i:nth-child(3) {
+            background-color: var(--color-primary);
+        }
+        div.prog>i {
+            display: inline-block;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            margin: 2px;
+            background-color: var(--color-light-2);
+        }
+        button {
+            white-space: nowrap;
+        }
+        path {
+            fill: currentColor;
+            stroke: currentColor;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <div class="image" id="symbolContainer">
+            <img id="creditCardImage" src="images/creditCard.png" style="width:200px" alt="Credit card"/>
+        </div>
+        <div class="butpan">
+            <button onclick="Increase()"><svg viewbox="0 0 48 48" width="16"><path d="M 20,5 V 20 H 5 v 8 h 15 v 15 h 8 V 28 H 43 V 20 H 28 V 5 Z"></path></svg> Increase</button>
+            <button onclick="Decrease()"><svg viewbox="0 0 48 48" width="16"><path d="M5 22L44 22 44 30 5 30z"></path></svg> Decrease</button>
+            <!-- <button onclick="Increase()">&#x2795;&#xFE0E; Increase</button>
+            <button onclick="Decrease()">&#x2796;&#xFE0E; Decrease</button> -->
+        </div>
+        <div class="info">
+            <h2>Lets set up your display</h2>
+            <p>To calculate the size of your display, please place your bank card against the screen and increase or decrease the size of the blue image using the buttons until you can just see it poking out from under the card.
+            </p>
+            <div class="prog">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><button onclick="window.location='instructions4.html'">Next</button>
+            </div>            
+        </div>
+    </section>
+    <script src="assets/js/main.js"></script>
+    </body>
+</html>
+
