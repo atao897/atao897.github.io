@@ -22,13 +22,19 @@
     
     <section id="main">
         <div id="container">
+            <button class = "buttonNext" onclick="breakup_adults()">Test for Adults (Letters)</button>
+        </div>
+        <div id="container">
+            <button class = "buttonNext" onclick="breakup_children()">Test for Children (Symbols)</button>
+        </div>
+        <!-- <div id="container">
         <button class = "buttonNext" style="display: inline-block;margin-right: 20px;" onclick="StartLettertest_self()">Test for Adults (Letters) <br>Self Administered<br></button>
         <button class = "buttonNext" style="display: inline-block;margin-left: 20px;" onclick="StartLettertest()">Test for Adults (Letters)<br>2 People Required<br></button>
         </div>
         <div id="container">
         <button class = "buttonNext" onclick="StartSymboltest_self()">Test for Children (Symbols)<br>Self Administered<br></button>
         <button class = "buttonNext" onclick="StartSymboltest()">Test for Children (Symbols)<br>2 People Required<br></button>
-        </div>
+        </div> -->
         <h3>By Taore, Sayer, Philips, Staples & Dakin</h3>
     </section>
     <footer>
@@ -49,6 +55,25 @@
         localStorage.email = email;
     else
         document.location = "register.html";
+    
+    function breakup_adults() {
+        // change background image
+        // "url('./images/adults_split.png')"
+        document.getElementById("main").style.backgroundImage = "url('./images/none.png')";
+        document.getElementById("main").innerHTML = "<h1> How would you like to take the test? </h1>" + 
+        "<img src='./images/adults_split.png'></img>" + 
+        "<div id='container'><button class = 'buttonNext' style='display: inline-block;margin-right: 20px;' onclick='StartLettertest_self()'>Self Administered</button><button class = 'buttonNext' style='display: inline-block;margin-left: 20px;' onclick='StartLettertest()'>2 People Required</button></div>"
+    }
+
+    function breakup_children() {
+        // change background image
+        // "url('./images/children_split.png')"
+        document.getElementById("main").style.backgroundImage = "url('./images/none.png')";
+        document.getElementById("main").innerHTML = "<h1> How would you like to take the test? </h1>" + 
+        "<img src='./images/child_split.png'></img>" + 
+        "<div id='container'><button class = 'buttonNext' style='display: inline-block;margin-right: 20px;' onclick='StartSymboltest_self()'>Self Administered</button><button class = 'buttonNext' style='display: inline-block;margin-left: 20px;' onclick='StartSymboltest()'>2 People Required</button></div>"
+    }
+
 </script>
 </body>
 </html>
