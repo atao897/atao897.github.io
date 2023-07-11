@@ -41,6 +41,7 @@
 </head>
 <body style="display: flex">
     <section class="centered">
+        <div id="speechRecognised"></div>
         <div id="holdingImageStill" style="height:280px" style="text-align: center">
             <img id="imageNew" src="letters/Pic1.svg" alt="" />
         </div>
@@ -65,6 +66,81 @@
     </section>
     
     <script>
+        const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+        const SpeechGrammarList =
+        window.SpeechGrammarList || window.webkitSpeechGrammarList;
+        const SpeechRecognitionEvent =
+        window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
+
+        const colors = [
+        "rabbit",
+        "flower",
+        "car",
+        "butterfly",
+        "rocket",
+        "house",
+        "pacman",
+        "tree",
+        "duck",
+        "heart", /* … */,
+        ];
+        const grammar = `#JSGF V1.0; grammar colors; public <color> = ${colors.join(
+        " | ",
+        )};`;
+
+        const colorMap = {};
+        colors.forEach((color, i) => {
+            console.log(color, i);
+            colorMap[color] = i;
+        });
+
+    
+
+        const recognition = new SpeechRecognition();
+        const speechRecognitionList = new SpeechGrammarList();
+        speechRecognitionList.addFromString(grammar, 1);
+        recognition.grammars = speechRecognitionList;
+        recognition.continuous = false;
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.start();
+        console.log("Ready to receive a color command.");
+
+        recognition.onresult = (event) => {
+        const color = event.results[0][0].transcript;
+        if (color in colorMap) {
+        console.log("Color Found")
+        console.log(color)
+        speechRecognised = document.getElementById("speechRecognised");
+        speechRecognised.innerHTML = color
+        speechRecognised.style.fontSize = "100px";  // Change the size as per your need
+            
+        // localStorage.AnswerSymbol = colorMap[color];
+        // checkAnswer()
+        }
+        else {
+            console.log("Color not found");
+        }
+
+        console.log("Color Found")
+        console.log(color)
+        speechRecognised = document.getElementById("speechRecognised");
+        speechRecognised.innerHTML = color
+        speechRecognised.style.fontSize = "100px"; 
+
+        // diagnostic.textContent = `Result received: ${color}.`;
+        // bg.style.backgroundColor = color;
+        console.log(`Confidence: ${event.results[0][0].confidence}`);
+        };
+
+        recognition.onend = () => {
+            console.log("Recognition ended, restarting...");
+            recognition.start();
+        };
+
         function symbol0() {
             localStorage.AnswerSymbol = 0
             checkAnswer()
@@ -110,6 +186,7 @@
             checkAnswer()
         }
         function checkAnswer() {
+            speechRecognised.innerHTML = ''
             imageNew.src = "images/blank.png";
             if (localStorage.AnswerSymbol == localStorage.symbolPic) {
                 console.log("CORRECT");
