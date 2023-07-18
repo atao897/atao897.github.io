@@ -22,7 +22,7 @@ spinner.ontransitionend = () => {
 // Initial value for the Normalized Focal Length
 const focalLengthSlider = document.getElementById('focalLengthSlider');
 const focalLengthOutput = document.getElementById('focalLengthOutput');
-let normalizedFocalLength = 6.24;
+let normalizedFocalLength = 1.3;
 focalLengthSlider.addEventListener('input', (event) => {
   // Update the Normalized Focal Length value
   normalizedFocalLength = parseFloat(event.target.value);
@@ -105,6 +105,7 @@ function onResultsFaceMesh(results) {
 
   var Leftdx = irisLeftMaxX - irisLeftMinX;
   var Rightdx = irisRightMaxX - irisRightMinX;
+  console.log(Leftdx,Rightdx)
   var dX = 11.7;
 
   // Logitech HD Pro C922	Norm focal
@@ -112,9 +113,9 @@ function onResultsFaceMesh(results) {
   // var fx = Math.min(width, height) * normalizedFocaleX;
   // var dZ = (fx * (dX / dx)) / 10.0;
 
-  var fx = normalizedFocalLength
-  var leftdZ = (fx * (dX / Leftdx)) * 10.0;
-  var rightdZ = (fx * (dX / Rightdx)) * 10.0;
+  var fx = Math.min(width, height) * normalizedFocalLength;
+  var leftdZ = (fx * (dX / Leftdx)) / 10.0;
+  var rightdZ = (fx * (dX / Rightdx)) / 10.0;
 
   var dZ = (leftdZ+rightdZ) / 2
   dZ = dZ.toFixed(2);
@@ -135,8 +136,8 @@ const camera = new Camera(video2, {
   onFrame: async () => {
     await faceMesh.send({image: video2});
   },
-  width: 480,
-  height: 480
+  width: 400,
+  height: 400
 });
 camera.start();
 
