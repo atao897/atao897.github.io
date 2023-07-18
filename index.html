@@ -1,77 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acuity Test</title>
-    <script>
-        var email = document.location.hash.slice(1);
-        var reValid = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        if (reValid.test(email))
-            localStorage.email = email;
-        else
-            document.location = "register.html";
-    </script>
-    <link rel="stylesheet" href="assets/css/styles.css">
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+  <!-- <link rel="shortcut icon" href="favicon.ico" /> -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.1/control_utils.css" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" type="text/css" href="demo.css" crossorigin="anonymous"> -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
-    <header>
-        <img alt="UoA logo" src="images/logo.svg">
-        <div><h1>MyAcuity</h1><h3>A simple vision test for home use</h3></div>
-    </header>
-    
-    <section id="main">
-        <div id="container">
-            <button class = "buttonNext" onclick="breakup_adults()">Test for Adults (Letters)</button>
-        </div>
-        <div id="container">
-            <button class = "buttonNext" onclick="breakup_children()">Test for Children (Symbols)</button>
-        </div>
-        <!-- <div id="container">
-        <button class = "buttonNext" style="display: inline-block;margin-right: 20px;" onclick="StartLettertest_self()">Test for Adults (Letters) <br>Self Administered<br></button>
-        <button class = "buttonNext" style="display: inline-block;margin-left: 20px;" onclick="StartLettertest()">Test for Adults (Letters)<br>2 People Required<br></button>
-        </div>
-        <div id="container">
-        <button class = "buttonNext" onclick="StartSymboltest_self()">Test for Children (Symbols)<br>Self Administered<br></button>
-        <button class = "buttonNext" onclick="StartSymboltest()">Test for Children (Symbols)<br>2 People Required<br></button>
-        </div> -->
-        <h3>By Taore, Sayer, Philips, Staples & Dakin</h3>
-    </section>
-    <footer>
-        <a rel="noopener" href="https://www.auckland.ac.nz/en/admin/footer-links/copyright.html" target="_blank">Copyright </a>
-        <span>|</span>
-        <a rel="noopener" href="https://www.auckland.ac.nz/en/admin/footer-links/privacy.html" target="_blank">Privacy </a>
-        <span>|</span>
-        <a rel="noopener" href="https://www.auckland.ac.nz/en/admin/footer-links/disclaimer.html" target="_blank">Disclaimer</a>
-</footer>
-<script src="assets/js/main.js"></script>
-<script nomodule="">
-    main.innerHTML = "<h1>Sorry, My Acuity will not work with this browser.</h1>"
-</script>
-<script>
-    var email = document.location.hash.slice(1);
-    var reValid = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (reValid.test(email))
-        localStorage.email = email;
-    else
-        document.location = "register.html";
-    
-    function breakup_adults() {
-        document.getElementById("main").style.backgroundImage = "url('./images/none.png')";
-        document.getElementById("main").innerHTML = "<embed src='./images/optionA_B.svg' width=40% display:flex />" +
-        "<h1> How would you like to take the test? </h1>" + 
-        "<div id='container'><button class = 'buttonNext' style='display: inline-block;margin-right: 20px;' onclick='StartLettertest()'>Option A</button><button class = 'buttonNext' style='display: inline-block;margin-left: 20px;' onclick='StartLettertest_self()'>Option B</button></div></br></br>"
-    }
 
-    function breakup_children() {
-        // change background image
-        // "url('./images/children_split.png')"
-        document.getElementById("main").style.backgroundImage = "url('./images/none.png')";
-        document.getElementById("main").innerHTML = "<embed src='./images/optionA_B.svg' width=40% display:flex />" +
-        "<h1> How would you like to take the test? </h1>" + 
-        "<div id='container'><button class = 'buttonNext' style='display: inline-block;margin-right: 20px;' onclick='StartSymboltest()'>Option A</button><button class = 'buttonNext' style='display: inline-block;margin-left: 20px;' onclick='StartSymboltest_self()'>Option B</button></div></br></br>"
-    }
+  <!-- CONTENTS -->
+  <div class="container" style="margin-top: 20px;">
+    
+      <div class="panel-block" style="display: none";>
+        <video class="input_video2"></video>
+      </div>
 
-</script>
+    <!-- MEDIAPIPE OUTPUT -->
+    <article class="panel is-info">
+      <p class="panel-heading" style="position:relative;display: flex; align-items: center; justify-content: center">
+        Measuring Distance
+      </p>
+      <div class="panel-block" style="position:relative;display: flex; align-items: center; justify-content: center">
+          <canvas class="output2" width="480px" height="480px"></canvas>
+      </div>
+    </article>
+
+
+        <div class="control_focalLength" style="align-items: center; justify-content: center">
+              <label class="label has-text-centered" style="align-items: center; justify-content: center">Normalized Focal Length</label>
+              <p class="has-text-centered">
+                The Focal Length (mm) determines the scaling factor for converting iris measurements to actual distance. The default value is <b><span style='color: red;'>6.24mm</span></b>, calibrated for a Logitech C990 using a checkerboard calibration offline. <br></br>"                <input id="focalLengthSlider" class="slider is-fullwidth is-info has-text-centered" style="text-align:center; width: 500px;
+                margin:0 auto; " type="range" min="0.5" max="10" step="0.1" value="6.24">
+                <output id="focalLengthOutput" class="has-text-centered">6.24</output>
+              </p>
+        </div>
+    </div>
+
+        
+    <div class="loading">
+      <div class="spinner"></div>
+    </div>
+  <div style="visibility: hidden;" class="control2">
+  </div>
+
+  <script type="text/javascript" src="./js/index.js"></script>
 </body>
 </html>
