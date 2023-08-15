@@ -1,0 +1,212 @@
+<style>
+    .button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f2f2f2;
+  border-radius: 10px;
+}
+
+button {
+  background-color: #1e90ff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.video-container {
+  background-color: #f2f2f2;
+}
+
+.game-container {
+  background-color: #e0e0e0;
+}
+
+button {
+  background-color:#1e90ff;
+  /* other button styles... */
+}
+
+button:disabled {
+  background-color: #ccc;
+  color: #999;
+  cursor: not-allowed;
+}
+
+
+
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/remote-calibrator@latest"></script>
+<!-- <script src="framebyframeRecording"></script> -->
+<script src="scripts/azurestoragejs.blob-10.5.0/azure-storage-blob.js" charset="utf-8"></script>
+
+
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+<body id="body">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <div class="px-4 py-5 my-5 text-center" id="hero" style="display: block;">
+      <!-- <img class="d-block mx-auto mb-1" src="eyeinclogo.png" alt="" width="66" height="46"> -->
+      <h1 class="display-5 fw-bold" id="title">Let's get started! </h1>
+      <div class="col-lg-6 mx-auto">
+        <p class="lead mt-3 mb-5"></br>
+            Please continue with the following tests:</br>
+
+        
+        <div class="d-grid gap-2 justify-content-center">
+
+<!-- <div class="button-container">
+<h3>(A) Video Watching</h3>
+<button id="watch-video-btn" type="button" onclick="startVideoWatching()">Watch Videos (dur: 3 mins)</button>
+</div> -->
+
+<!-- <div class="button-container">
+  <h3>Calibration</h3>
+  <button id="calibration-btn" type="button" onclick="startCalibrationTask()">Calibration @ 50cm (dur: 1 mins)</button>
+</div>
+
+<div class="button-container">
+  <h3>Fixation Task</h3>
+  <button id="fixation-btn" type="button" onclick="startFixationTask()">Fixation Task @ 50cm (dur: 2 mins)</button>
+</div> -->
+
+<div class="button-container">
+<h3>Depth Collection</h3>
+<button id="depth-40-btn" type="button" onclick="startMeasurement('40')">Measurement @ 40cm (dur: 1.5 mins)</button>
+<button id="depth-50-btn" type="button" onclick="startMeasurement('50')">Measurement @ 50cm (dur: 1.5 mins)</button>
+<button id="depth-60-btn" type="button" onclick="startMeasurement('60')">Measurement @ 60cm (dur: 1.5 mins)</button>
+</div>
+
+
+<!-- <div class="button-container">
+  <h3>(B) Fatigue Testing</h3>
+  <button id="fatigue-btn" type="button" onclick="startFatigue()">Multiple Object Tracking (dur: 1 hour)</button>
+</div> -->
+<!-- 
+<div class="button-container">
+    <h3>(C) Completion Code</h3>
+    <h6>Completion Code Available After All Tests Are Completed</h6>
+    <button id="completion-code-btn" type="button" onclick="redirectToCompletionCode()" disabled>Get Completion Code</button>
+    </div>
+ -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+  // Check if the video has been completed
+  if (localStorage.calibration === "true") {
+    var btn = document.getElementById("calibration-btn");
+    if (btn) {
+      btn.style.backgroundColor = "green"
+    }
+  }
+
+  // Check if the easy game has been completed
+  if (localStorage.fixationTask === "true") {
+    var btn = document.getElementById("fixation-btn");
+    if (btn) {
+        btn.style.backgroundColor = "green"
+    }
+  }
+
+  // Check if the hard game has been completed
+  if (localStorage.depth_fourty === "true") {
+    var btn = document.getElementById("depth-40-btn");
+    if (btn) {
+      btn.style.backgroundColor = "green"
+    }
+  }
+    // Check if the hard game has been completed
+  if (localStorage.depth_fifty === "true") {
+    var btn = document.getElementById("depth-50-btn");
+    if (btn) {
+      btn.style.backgroundColor = "green"
+    }
+  }
+
+
+    // Check if the hard game has been completed
+  if (localStorage.depth_sixty === "true") {
+    var btn = document.getElementById("depth-60-btn");
+    if (btn) {
+      btn.style.backgroundColor = "green"
+    }
+  }
+
+
+  // Check if the game questionnaire has been completed
+  if (localStorage.gameQuestionnaireCompleted === "true") {
+    var questionnaireBtn = document.getElementById("game-questionnaire-btn");
+    if (questionnaireBtn) {
+        questionnaireBtn.style.backgroundColor = "green"
+
+    }
+  }
+
+  // Check if all tasks have been completed
+  if (
+    localStorage.videoCompleted === "true" &&
+    localStorage.easyGameComplete === "true" &&
+    localStorage.hardGameComplete === "true" &&
+    localStorage.gameQuestionnaireCompleted === "true"
+  ) {
+    var completionCodeBtn = document.getElementById("completion-code-btn");
+    if (completionCodeBtn) {
+      completionCodeBtn.disabled = false;
+    }
+  }
+
+});
+
+function startVideoWatching() {
+    // Redirect to the video watching page
+    window.location.href = 'video.html';
+  }
+
+function startFatigue(){
+  window.location.href = 'fatigueTest.html';
+
+}
+
+function startMeasurement(distance){
+  window.location.href = 'depthM.html?groundDistance='+distance;
+
+}
+
+function startCalibrationTask(){ 
+  window.location.href = 'calibration.html';
+}
+
+function startFixationTask(){
+  window.location.href = 'fixationTask.html';
+
+}
+
+  function startGame(difficulty) {
+    // Redirect to the game page with the specified difficulty level
+    window.location.href = 'game.html?difficulty=' + difficulty;
+  }
+
+  function startGameQuestionnaire() {
+    // Redirect to the game questionnaire page
+    window.location.href = 'game_questionnaire.html';
+  }
+
+  function redirectToCompletionCode() {
+    // Redirect to the completion code page
+    window.location.href = 'completionCode_.html';
+  }
+
+
+
+</script>
