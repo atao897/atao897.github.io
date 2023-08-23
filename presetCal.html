@@ -1,0 +1,1314 @@
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/remote-calibrator@latest"></script>
+<script src="scripts/azurestoragejs.blob-10.5.0/azure-storage-blob.js" charset="utf-8"></script>
+
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<!-- CSS -->
+<style>
+  .column {
+  float: left;
+  padding: 10px;
+}
+
+.left, .right {
+  width: 33%;
+}
+
+.middle {
+  width: 33%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+
+<body id="body">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <div class="px-4 py-5 my-5 text-center" id="hero" style="display: block;">
+    <h1 class="display-5 fw-bold" id="title">Device Calibration</h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mt-3 mb-5">Please complete each step in the order shown below.</p>
+      <div class="d-grid gap-2 justify-content-center">
+        <div class="row gap-2">
+          <div class="col" >
+            <div class="card" style="width:20rem; height:11rem" id="card-fullscreen">
+              <div class="card-body">
+                <h5 class="card-title">(1) Full Screen</h5>
+                <p class="card-text">Do not exit out of 'Full Screen' mode for the remainder of this study.</p>
+                <button type="button" class="btn btn-primary" id="fullscreen" onclick="openFullscreen()">Make Fullscreen</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card" style="width:20rem;height:11rem" id="card-screen-size">
+              <div class="card-body">
+                <h5 class="card-title">(2) Screen Size</h5>
+                <p class="card-text">We need this to calibrate your device's screen size.</p>
+                <button type="button" class="btn btn-primary" id="measureScreen" onclick="getScreenSize()">Measure Screen Size</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row gap-2">
+        </div>
+        <div class="row gap-2">
+          <div class="col">
+            <div class="card" style="width: 20rem;" id="card-webcam-center">
+              <div class="card-body">
+                <h5 class="card-title">(3) Is your webcam centred?</h5>
+                <h6 class="card-subtitle mb-2 text-muted">It is expected that for laptops the webcam is already centred.</h6>
+                <p class="card-text">If you are using a separate webcam, please centre this in the middle (as seen in the image below).</p>
+                <img src="https://sm.pcmag.com/pcmag_au/news/y/you-can-bu/you-can-buy-these-cheap-webcams-on-amazon-right-now-but-are_fze9.jpg" alt="center webcam" width="100%" style="padding-bottom:10px;">
+                <button type="button" class="btn btn-primary" id="measureDistanceFromScreeen" onclick="getwebcamCentered()">My Webcam is Centred</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card" style="width: 20rem;" id="card-height-camera">
+              <div class="card-body">
+                <h5 class="card-title">(4) Height of Webcam</h5>
+                <p class="card-text">This is the distance between the centre of your webcam's lens and the top bezel of your screen (image provided for example)</p>
+                <img src="./images/webcamPosition.PNG" alt="center webcam" width="100%" style="padding-bottom:10px;">
+                <label for="name">Height in cm:</label>
+                <input type="number" id="heightInput" name="heightInput" required
+                      minlength="1" maxlength="8" size="10" value="2">
+                    </br></br>
+                <button type="button" class="btn btn-primary" id="getHeightbutton" onclick="getHeightWebcam()">Done</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row gap-2" style="padding-top:1rem;">
+          <div class="col">
+            <div class="card" style="width:42rem" id="card-id">
+              <div class="card-body">
+                <h5 class="card-title">(5) Enter Device ID?</h5>
+                <label for="name">Device ID (no spaces):</label>
+                <input type="text" id="idInput" name="idInput" required
+                      minlength="1" maxlength="100" size="10">
+                  </br></br>
+                <button type="button" class="btn btn-primary" id="start-test" onclick="continueToTest()">Confirm</button>
+              </div>
+            </div>
+          </div>          
+        </div>
+
+        <div class="row gap-2">
+          <div class="col">
+            <div class="card" style="width: 42rem;height:11rem" id="card-camera">
+              <div class="card-body">
+                <h5 class="card-title">(6) Camera Access</h5>
+                <p class="card-text">Please provide access to your camera to record your eye movements.</p>
+                <button type="button" class="btn btn-primary" id="start-camera">Provide Acess</button>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row gap-2" style="padding-top:1rem;">
+          <div class="col">
+            <div class="card" style="width:42rem" id="card-final-check">
+              <div class="card-body">
+                <h5 class="card-title">(7) Run Calibration</h5>
+                <p>Make sure that the <a target="_blank" href="./images/Checkerboard.pdf">CHECKERBOARD PATTERN</a> you have is printed on a sturdy, flat surface. 
+                  Once you've verified this, proceed by clicking the 'record' button situated below. 
+                  During the subsequent 60-second video recording, you should vary the angles and distances 
+                  at which you display the checkerboard pattern. For your reference, we've provided examples 
+                  of still images showcasing the pattern from diverse angles and distances. It's crucial that 
+                  the pattern remains visible throughout your recording.</p>
+                <div class="column left">
+                  <img src="./images/checkerboard.png" alt="center webcam" width="100%" style="padding-bottom:10px;">
+                  <!-- <b>Bad Lighting</b> &#10060 </br>
+                  (Make sure eyes and face are clearly visible) -->
+                </div>
+                <div class="column middle">
+                  <img src="./images/checkerboard2.png" alt="center webcam" width="100%" style="padding-bottom:10px;">
+                  <!-- <b>Glasses On</b> &#10060 </br>
+                  (Remove Glasses) -->
+                </div>
+                <div class="column middle">
+                  <img src="./images/checkerboard3.png" alt="center webcam" width="100%" style="padding-bottom:10px;">
+                  <!-- <b>Ideal View</b>&#10004 &#65039 </br>
+                    (Face close to camera and centered with clear view of eyes) -->
+                </div>
+                <div class="container">
+                  <video autoplay="true" id="videoElement" style="width:75%; background-color: darkgray;">
+                  </video>
+                </div>
+
+              </br>
+                <button type="button" class="btn btn-primary" id="Final-Check" onclick="finalCheckComplete()" disabled >Start Recording</button>
+              </div>
+            </div>
+          </div>          
+        </div>
+        
+
+        <!-- <div class="row gap-2" style="padding-top:1rem;">
+          <div class="col">
+            <div class="card" style="width:42rem" id="card-camera">
+              <div class="card-body">
+                <h5 class="card-title">(8) Ready to Start?</h5>
+                <label for="name">Device ID (if any):</label>
+                <input type="text" id="idInput" name="idInput" required
+                      minlength="1" maxlength="100" size="10">
+                  </br></br>
+                <button type="button" class="btn btn-primary" id="start-test" onclick="continueToTest()" disabled>Continue to Tests</button>
+              </div>
+            </div>
+          </div>          
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+
+    <div class="screen" id="screen" style="margin:0px;height:100%;width:100%;display: none;">
+      
+        <div class="card-body" id="instruction" style="top: 50%;left: 50%;transform: translate(-50%, -50%);position: fixed;
+        text-align: center;font-size: large;">
+           <p class="card-text" id="instructionText">Please ensure the data has been downloaded before exiting.</p> 
+            <!-- <div id="testNumber" style="font-size: large;padding-top:1rem;"> -->
+              <!-- <p class="card-text" id="testNumberText"><strong>Duration: ~45 sec</strong></p> -->
+              <!-- <div id="testNumber" style="font-size: large;padding-top:1rem;"> -->
+              <!-- </div> -->
+              <!-- <button type="button" class="btn btn-primary" id="startTestButton" onclick="startTest()">Start Calibration</button> -->
+            <!-- </div> -->
+        </div>
+
+       <div id="stimulus" style="  height: 25px;
+        width: 25px;
+        background-color:#1e90ff;
+        border-radius: 50%;
+        display: none;top: 10%;left: 10%;position: absolute;"></div>
+    </div>
+  
+  </body>
+
+<script>
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
+}
+
+id = makeid(10)
+localStorage.prolificID = id
+localStorage.depth_fourty = "false"
+localStorage.depth_fifty = "false"
+localStorage.depth_sixty = "false"
+
+var elem = document.documentElement;
+var hero = document.getElementById("hero");
+var fullscreenButton = document.getElementById("fullscreen");
+var measureScreenButton = document.getElementById("measureScreen");
+var measureDistanceFromScreeenButton = document.getElementById("measureDistanceFromScreeen");
+var measureDistanceButton = document.getElementById("measureDistanceButton");
+var startCameraButton = document.getElementById("start-camera");
+var finalCheckButton = document.getElementById("Final-Check")
+var startButton = document.getElementById("start-test");
+var cardFullscreen = document.getElementById("card-fullscreen");
+var cardScreenSize = document.getElementById("card-screen-size");
+var cardDistanceScreen = document.getElementById("card-distance-screen");
+var cardcamera = document.getElementById("card-camera");
+var cardid = document.getElementById("card-id");
+var cardwebcamCenter = document.getElementById("card-webcam-center");
+var cardheightcamera = document.getElementById("card-height-camera")
+var cardfinalcheck = document.getElementById("card-final-check");
+var heightInput_textbox = document.getElementById("heightInput")
+var idInput_textbox = document.getElementById("idInput")
+var video = document.querySelector("#videoElement");
+
+
+var ary = "se=2023-03-01&sp=rwdlac&sv=2018-03-28&ss"
+var taore = "=b&srt=sco&sig=xO4bJtXYF0C%2BN3Rsm0TLX4Ram/VPrtDQ268qQk/cg7I%3D"
+
+var title = document.getElementById("title");
+var body = document.getElementById("body");
+body.style.margin = 0;
+var fullScreen = false;
+var screenSizeCalibrated = false;
+var distanceMeasured = true;
+var cameraStarted = false;
+var HeightWebcamEntered = false;
+var finalcheck = false;
+var webcamCentered = false;
+var prolificID;
+var screenWidth;
+var screenHeight;
+var distance = 0;
+var isChromium = window.chrome;
+var ballRadius = 10;
+var dx = 2;
+var dy = -2;
+let camera_stream = null;
+
+var sasToken = "sp=racwl&st=2023-04-13T23:12:27Z&se=2024-03-01T06:12:27Z&spr=https&sv=2021-12-02&sr=c&sig=LPCnOWQkH1qxjPt%2FFsVGRzJsPqDGgvPBs20LF4geef8%3D"
+const accountName = "eyetrackingdata";
+const sasString = sasToken
+const containerName = "bendata";
+const containerURL = new azblob.ContainerURL(
+    `https://${accountName}.blob.core.windows.net/${containerName}?${sasString}`,
+    azblob.StorageURL.newPipeline(new azblob.AnonymousCredential));
+
+// --- Will be shifted to test functions
+var instruction = document.getElementById("instruction")
+var stimulus = document.getElementById("stimulus")
+var x = document.getElementById("stimulus").style.left;
+var y = document.getElementById("stimulus").style.top;
+x = parseInt(x.slice(0,x.length-1))
+y = parseInt(y.slice(0,y.length-1))
+incX = 0.1
+incY = 0.1
+testNumber = 6
+counter = 0
+xArray = []
+yArray = []
+timeArray = []
+
+
+function startTest(){
+
+  counter = 0
+  xArray = []
+  yArray = []
+  timeArray = []
+  directionX = Math.random()-0.5
+  directionY = Math.random()-0.5
+  incX = 0.15*(Math.random()+0.5)*(directionX/Math.abs(directionX))
+  incY = 0.15*(Math.random()+0.5)*(directionY/Math.abs(directionY))
+
+  if (testNumber==6){
+    incX = 0.25
+    incY = 0.25
+  }
+
+  instruction.style.display = "none"
+  // startRecording()
+  
+  if (testNumber < 5){
+    moveImage()
+  } else if (testNumber == 5){
+    incX = 0.15
+    incY = 0
+    borderTask()
+  } else if (testNumber==6){
+    x = 0.15
+    y = 0.10
+    calibrationTask()
+  } else if (testNumber == 7){
+    fixationTask()
+  }
+}
+
+function stopWriting(){
+  // let text_local = makeTextFile(xArray+'\r\n'+yArray + '\r\n' + timeArray);
+  // downloadURI(text_local, "test.csv");
+  uploadText()
+}
+
+var textFile = null,
+makeTextFile = function (text) {
+    var data = new Blob([text], {type: 'text/plain'});
+
+    // If we are replacing a previously generated file we need to
+    // manually revoke the object URL to avoid memory leaks.
+    if (textFile !== null) {
+      window.URL.revokeObjectURL(textFile);
+    }
+
+    textFile = window.URL.createObjectURL(data);
+
+    // returns a URL you can use as a href
+    return textFile;
+};
+
+var upperbound_x = 96
+var lowerbound_x = 2
+var upperbound_y = 96
+var lowerbound_y = 2
+resetMovement_count = 0
+function resetMovement(){
+  resetMovement_count = resetMovement_count + 1
+  if (resetMovement_count == 1){
+    upperbound_x = 50
+    lowerbound_x = 25
+  } else if (resetMovement_count == 2){
+    upperbound_x = 75
+    lowerbound_x = 50
+  } else if (resetMovement_count == 3){
+    upperbound_x = 96
+    lowerbound_x = 75
+  } else if (resetMovement_count == 4){
+    upperbound_x = 96
+    lowerbound_x = 2
+  } else if (resetMovement_count == 5){
+    upperbound_x = 96
+    lowerbound_x = 2
+  } else if (resetMovement_count == 6){
+    upperbound_x = 96
+    lowerbound_x = 2
+  }
+}
+
+border_Task_State = 0
+function borderTask(){
+
+if (border_Task_State == 0){
+  incX = 0.15
+  incY = 0
+  if (x > upperbound_x){
+    border_Task_State  = 1
+  }
+}
+
+if (border_Task_State==1){
+  incX = 0
+  incY = 0.15
+  if (y > upperbound_y){
+    border_Task_State  = 2
+  }
+}
+
+if (border_Task_State==2){
+  incX = -0.15
+  incY = 0
+  if (x < lowerbound_x){
+    border_Task_State  = 3
+  }
+}
+
+if (border_Task_State==3){
+  incX = 0
+  incY = -0.15
+  if (y < lowerbound_y){
+    border_Task_State  = 4
+  }
+}
+
+  x = x + incX
+  y = y + incY
+  let time = new Date().getTime();
+
+  timeArray.push(time)
+  xArray.push(x)
+  yArray.push(y)
+
+  stimulus.style.left = x +'%';
+  stimulus.style.top = y +'%';
+
+if (border_Task_State<4){
+setTimeout(borderTask, 10);
+} else {
+  stopWriting()
+  stopRecording()
+  videoStart = []
+  resetMovement()
+  testNumber = testNumber + 1
+
+  if (testNumber == 6){
+    document.getElementById("instructionText").innerHTML = "You are so close, again follow the blue dot  <br> as closely as possible with your eyes </br> (without moving your head) </br>"
+    x = 3
+    y = 3
+  } 
+  stimulus.style.left = x + '%';
+  stimulus.style.top = y + '%';
+
+  document.getElementById("testNumberText").innerHTML = "<strong>Test " + testNumber + "/7</strong>"
+
+  // if (testNumber == 7){
+  //   instruction.innerHTML = "<strong>All Done. Thankyou for your time.<strong>"
+  //   stimulus.style.display = "none"
+  // }
+  instruction.style.display = "block"
+}
+}
+
+function calibrationTask(){
+
+  counter = counter + 1
+  if (x>upperbound_x){
+  incX = -0.15
+  }else if (x<lowerbound_x){
+  incX = 0.15
+  }
+
+  if (y>upperbound_y){
+  incY = -0.02
+  }else if (y<lowerbound_y){
+  incY = 0.02
+  }
+
+    x = x + incX
+    y = y + incY
+    let time = new Date().getTime();
+
+    timeArray.push(time)
+    xArray.push(x)
+    yArray.push(y)
+
+    stimulus.style.left = x +'%';
+    stimulus.style.top = y +'%';
+
+  if (y<90){
+  setTimeout(calibrationTask, 10);
+  } else {
+    instruction.innerHTML = "<strong>Data now uploading, please wait a few seconds.<strong>"
+    instruction.style.display = "block"
+    stimulus.style.display = "none"
+    stopWriting()
+    stopRecording()
+    videoStart = []
+    resetMovement()
+
+    const checkUploadStatus = () => {
+    if (videoUploadComplete && textUploadComplete) {
+      // Both uploads are complete, redirect to the menu page
+      window.location.href = "menu.html";
+    } else {
+      // Keep checking after a delay of 1 second
+      setTimeout(checkUploadStatus, 1000);
+    }
+  };
+
+  checkUploadStatus(); 
+};
+
+
+}
+
+    // testNumber = testNumber + 1
+
+  //   if (testNumber == 7){
+  //     document.getElementById("instructionText").innerHTML = "Last one, the dot will now appear at RANDOM LOCATIONS, <br>fixate on it </br> (without moving your head) </br>"
+  //   x = 5
+  //   y = 60
+  //   } 
+  //   stimulus.style.left = x + '%';
+  //   stimulus.style.top = y + '%';
+
+  //   document.getElementById("testNumberText").innerHTML = "<strong>Test " + testNumber + "/7</strong>"
+
+  //   if (testNumber == 8){
+  //     instruction.innerHTML = "<strong>All Done. Thankyou for your time.<strong>"
+  //     stimulus.style.display = "none"
+  //   }
+  //   instruction.style.display = "block"
+  // }
+
+
+fixation_x = [75,75,25,25,75,25,50,50,75,50,25,50,75,50,25,50,25,75,0]
+fixation_y = [75,50,50,75,25,25,75,50,75,75,50,50,50,25,75,25,25,25,0]
+
+function fixationTask(){
+  if ((counter==0) ||  (counter%200)==0){
+  x = fixation_x[counter/200]
+  y = fixation_y[counter/200]
+  }
+
+  counter = counter + 1
+
+    let time = new Date().getTime();
+
+    timeArray.push(time)
+    xArray.push(x)
+    yArray.push(y)
+
+    stimulus.style.left = x +'%';
+    stimulus.style.top = y +'%';
+
+  if (counter<3600){
+  setTimeout(fixationTask, 10);
+  } else {
+    stopWriting()
+    stopRecording()
+    videoStart = []
+    resetMovement()
+    testNumber = testNumber + 1
+    document.getElementById("testNumberText").innerHTML = "<strong>Test " + testNumber + "/7</strong>"
+    
+    if (testNumber == 8){
+    // instruction.innerHTML = "<strong>All Done. Thankyou for your time. </br> Wait ~45 sec before closing this page (you can minimise it), so that all data is successfully uploaded.</br>Completion Code is 282ED0C4.<strong>"
+    instruction.innerHTML = "<strong>All Done. Thankyou for your time. </br>Completion Code is C1GQQHAQ.<strong>"
+    stimulus.style.display = "none"
+    }
+    instruction.style.display = "block"
+  }
+
+}
+
+var stopFive = 0
+function moveImage(){
+  counter = counter + 1
+  if (x>upperbound_x){
+  incX = -0.15*(Math.random()+0.5)
+  }else if (x<lowerbound_x){
+  incX = 0.15*(Math.random()+0.5)
+  }
+
+  if (y>upperbound_y){
+  incY = -0.15*(Math.random()+0.5)
+  }else if (y<lowerbound_y){
+  incY = 0.15*(Math.random()+0.5)
+  }
+
+    x = x + incX
+    y = y + incY
+    let time = new Date().getTime();
+
+    timeArray.push(time)
+    xArray.push(x)
+    yArray.push(y)
+
+    stimulus.style.left = x +'%';
+    stimulus.style.top = y +'%';
+
+  if (counter<2500){
+  setTimeout(moveImage, 10);
+  } else {
+    stopWriting()
+    stopRecording()
+    videoStart = []
+    resetMovement()
+    testNumber = testNumber + 1
+    if (testNumber == 2){
+    document.getElementById("instructionText").innerHTML = "Great Job, again follow the blue dot  <br> as closely as possible with your eyes </br> (without moving your head) </br>"
+    x = 30
+    y = 20
+    } else if (testNumber == 3){
+    document.getElementById("instructionText").innerHTML = "You are doing excellent, again follow the blue dot  <br> as closely as possible with your eyes </br> (without moving your head) </br>"
+    x = 60
+    y = 80
+    } else if (testNumber == 4){
+    document.getElementById("instructionText").innerHTML = "Keep at it, again follow the blue dot  <br> as closely as possible with your eyes </br> (without moving your head) </br>"
+    x = 80
+    y = 10
+    } else if (testNumber == 5){
+      document.getElementById("instructionText").innerHTML = "Almost there, again follow the blue dot  <br> as closely as possible with your eyes </br> (without moving your head) </br>"
+    x = 3
+    y = 3
+    } else if (testNumber == 6){
+      document.getElementById("instructionText").innerHTML = "You are so close, again follow the blue dot  <br> as closely as possible with your eyes </br> (without moving your head) </br>"
+    x = 3
+    y = 3
+    } else if (testNumber == 7){
+      document.getElementById("instructionText").innerHTML = "Last one, the dot will now appear at RANDOM LOCATIONS <br>, fixate on it </br> (without moving your head) </br>"
+    x = 70
+    y = 70
+    } 
+    stimulus.style.left = x + '%';
+    stimulus.style.top = y + '%';
+
+    document.getElementById("testNumberText").innerHTML = "<strong>Test " + testNumber + "/7</strong>"
+
+    if (testNumber == 8){
+      instruction.innerHTML = "<strong>All Done. Thankyou for your time.<strong>"
+      stimulus.style.display = "none"
+    }
+    instruction.style.display = "block"
+  }
+}
+//
+
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) { /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE11 */
+    elem.msRequestFullscreen();
+  }
+
+    const windowWidth = window.innerWidth * window.devicePixelRatio;
+    const windowHeight = window.innerHeight * window.devicePixelRatio;
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+
+    localStorage.screenWidthPX = window.screen.width;
+    localStorage.screenHeightPX = window.screen.height;
+
+    fullScreen = true
+    // fullscreenButton.classList.remove('btn-primary')
+    // fullscreenButton.classList.add('btn-success')
+    // cardFullscreen.classList.add('bg-success')
+    cardFullscreen.style.backgroundColor = '#bcf5bc'
+
+  checkAllComplete()
+}
+
+function getScreenSize(){
+    RemoteCalibrator.init({ id: 'session_022' })
+    RemoteCalibrator.screenSize({}, data => {
+      console.log(`ScreenWidth: ${data.value.screenWidthCm}cm.`)
+      console.log(`ScreenHeight: ${data.value.screenHeightCm}cm.`)
+
+      screenWidth = data.value.screenWidthCm
+      screenHeight = data.value.screenHeightCm
+
+      localStorage.screenWidth = screenWidth
+      localStorage.screenHeight = screenHeight
+
+      if (screenWidth!=null && screenHeight!=null) {
+        screenSizeCalibrated = true
+        // measureScreenButton.classList.remove('btn-outline-primary')
+        // measureScreenButton.classList.add('btn-success')
+        cardScreenSize.style.backgroundColor = '#bcf5bc'
+        console.log(screenSizeCalibrated)
+      }
+      checkAllComplete()
+    })
+
+    // screenWidth = 94
+    // screenHeight = 53
+    // localStorage.screenWidth = 94
+    // localStorage.screenHeight = 53
+    // cardScreenSize.style.backgroundColor = '#bcf5bc'
+    // screenSizeCalibrated = true
+    // checkAllComplete() 
+    
+}
+
+function getDistance(){
+
+}
+
+var testingAudio = new Audio('Testing.mp3');
+// var volumeSlider = document.getElementById("volume");
+
+// volumeSlider.oninput = function() {
+//   testingAudio.volume = volumeSlider.value / 100;
+//   localStorage.volume = volumeSlider.value / 100;
+//   testingAudio.play();
+// }
+
+var cardVolume = document.getElementById("card-volume")
+function volumeScaled(){
+    cardVolume.style.backgroundColor = '#bcf5bc'
+    cardvolumeTest = true
+    checkAllComplete()
+}
+
+
+var mouseCard = document.getElementById("card-mouse")
+  function checkMouse() {
+    hasMouse = true;
+    mouseCard.style.background = '#bcf5bc'
+    // Check for mouse support
+    checkAllComplete()
+  }
+
+function getwebcamCentered(){
+      webcamCentered = true
+      // measureScreenButton.classList.remove('btn-outline-primary')
+      // measureScreenButton.classList.add('btn-success')
+      cardwebcamCenter.style.backgroundColor = '#bcf5bc'
+      console.log(webcamCentered)
+      checkAllComplete()
+}
+
+function getHeightWebcam(){
+  if (heightInput_textbox.value>0){
+  HeightWebcamEntered = true
+  webcamHeight = heightInput_textbox.value
+  console.log(webcamHeight)
+  heightInput_textbox.disabled = true
+  cardheightcamera.style.backgroundColor = '#bcf5bc'
+  }
+  checkAllComplete()
+}
+
+function finalCheckComplete(){
+  finalcheck = true
+  cardfinalcheck.style.backgroundColor = '#bcf5bc'
+  // measureDistanceButton.disabled=false
+  checkAllComplete()
+  startRecording()
+  counter_finalCheckComplete()
+}
+
+countCalibration = 10
+function counter_finalCheckComplete(){
+  countCalibration = countCalibration -1
+  finalCheckButton.innerHTML = '' + countCalibration
+  if (countCalibration == 0){
+    stopRecording()
+
+  }else{
+  setTimeout(counter_finalCheckComplete, 1000);
+  }
+}
+
+
+
+function measureDistance(){
+  // startRecording()
+  RemoteCalibrator.init({ id: 'session_022' })
+  RemoteCalibrator.measureDistance({}, data => {
+    console.log(`The viewing distance is ${data.value}cm.`)
+    distance = data.value
+    localStorage.distance = distance
+    stopRecording()
+    if (distance!=null){
+      distanceMeasured = true
+
+      // measureDistanceFromScreeenButton.classList.remove('btn-outline-primary')
+      // measureDistanceFromScreeenButton.classList.add('btn-success')
+        cardDistanceScreen.style.backgroundColor = '#bcf5bc'
+    }
+    checkAllComplete()
+  })
+}
+
+function getImageLightness(imageSrc,callback) {
+    var img = document.createElement("img");
+    img.crossOrigin = "Anonymous";
+    img.src = imageSrc;
+    img.style.display = "none";
+    document.body.appendChild(img);
+
+    var colorSum = 0;
+
+    img.onload = function() {
+        // create canvas
+        var canvas = document.createElement("canvas");
+        canvas.width = this.width;
+        canvas.height = this.height;
+
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(this,0,0);
+
+        var imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+        var data = imageData.data;
+        var r,g,b,avg;
+
+        for(var x = 0, len = data.length; x < len; x+=4) {
+            r = data[x];
+            g = data[x+1];
+            b = data[x+2];
+
+            avg = Math.floor((r+g+b)/3);
+            colorSum += avg;
+        }
+
+        var brightness = Math.floor(colorSum / (this.width*this.height));
+        callback(brightness);
+    }
+}
+
+let camera_button = document.querySelector("#start-camera");
+
+camera_button.addEventListener('click', async function() {
+   	camera_stream = await navigator.mediaDevices.getUserMedia({video: {
+        width: { ideal: 1920 },
+        height: { ideal: 1080 } 
+    }, audio: false })
+    // camera_stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    console.log(camera_stream.getVideoTracks().length)
+
+    if (camera_stream.getVideoTracks().length > 0){
+
+        let {width, height} = camera_stream.getTracks()[0].getSettings();
+        console.log(`${width}x${height}`); // 640x480
+
+        // if (height>1020){
+        if (height>0){
+        cameraStarted = true
+        video.srcObject  = camera_stream;
+        cardcamera.style.backgroundColor = '#bcf5bc'
+        finalCheckButton.disabled = false
+
+    
+
+        // document.getElementById("webcamResMessage").style = "display:inline"
+        checkAllComplete()
+        } else {
+          cardcamera.style.backgroundColor = '#FA8072'
+          alert("Your web-cam does not meet our resolution standards (atleast 1080p)" + "\n" + toUnicodeVariant("Sorry! Please exit the test.",'bold sans', 'bold'))
+        }
+    }
+    
+});
+
+// video.addEventListener('timeupdate', function() {
+//     var canvas = document.createElement("canvas");
+//     if (video.videoWidth && video.videoHeight){
+//     canvas.width = video.videoWidth;
+//     canvas.height = video.videoHeight;
+
+//     var ctx = canvas.getContext("2d");
+//     ctx.drawImage(video,0,0);
+
+//     var imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+//     var data = imageData.data;
+//     var r,g,b,avg;
+//     var colorSum = 0
+//     for(var x = 0, len = data.length; x < len; x+=4) {
+//         r = data[x];
+//         g = data[x+1];
+//         b = data[x+2];
+
+//         avg = Math.floor((r+g+b)/3);
+//         colorSum += avg;
+//     }
+
+//     var brightness = Math.floor(colorSum / (this.videoWidth*this.videoHeight));
+//     console.log(brightness);
+//   }
+
+// });
+
+function handleVideo(stream) {
+  console.log("HANDLE VIDEO")
+    video.srcObject  = stream;
+}
+
+function checkAllComplete(){
+  if(fullScreen && screenSizeCalibrated && distanceMeasured && cameraStarted && webcamCentered && HeightWebcamEntered && finalcheck){
+    startButton.classList.remove('btn-secondary')
+    startButton.classList.add('btn-primary')
+    startButton.disabled = false;
+  }
+}
+
+
+function drawBall() {
+      ctx.beginPath();
+      ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+      ctx.fillStyle = "#0095DD";
+      ctx.fill();
+      ctx.closePath();
+  }
+
+function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBall();
+      
+      if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+          dx = -dx;
+      }
+      if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
+          dy = -dy;
+      }
+      
+      x += dx;
+      y += dy;
+
+}
+
+function continueToTest(){
+  // video.remove()
+  prolificID = idInput_textbox.value
+
+  localStorage.prolificID = prolificID
+  localStorage.screenHeightcm = screenHeight
+  localStorage.screenWidthcm = screenWidth
+  localStorage.webcamHeight = webcamHeight
+  localStorage.distance = distance
+  localStorage.videoCompleted = false
+  localStorage.hardGameComplete = false
+  localStorage.easyGameComplete = false
+  localStorage.gameQuestionnaireCompleted = false
+
+
+
+
+  if (prolificID == ''){
+      prolificID = id
+  }
+
+  localStorage.prolificID = prolificID
+
+
+  console.log(prolificID)
+  cardid.style.backgroundColor = '#bcf5bc'
+
+  // window.location.href = "fatigueTest.html";
+
+  // window.location.href = "menu.html";
+
+  // document.getElementById("hero").style.display = "none"
+  // document.getElementById("screen").style.display = "block"
+  
+  // window.location.href = "testing.html"
+  // hero.style.display = 'none'
+  // drawCanvas.style.display = 'block'
+  // startRecording()
+  // setInterval(draw, 10);
+  // let time = new Date().getTime();
+  // console.log('Stimulus started:'+time)
+  // startCountdown(30)
+  // time = new Date().getTime();
+  // console.log('Countdown started:'+time)
+}
+
+let media_recorder = null;
+var blobs_recorded = [];
+var blobs_recorded_1 = [];
+var blobs_recorded_2 = [];
+var blobs_recorded_3 = [];
+var blobs_recorded_4 = [];
+var blobs_recorded_5 = [];
+var blobs_recorded_6 = [];
+var blobs_recorded_7 = [];
+var time_frame_video = [];
+
+
+var videoStart = [];
+count = -1;
+async function startRecording(){
+    // camera_stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    count = count + 1;
+    console.log("Start Recording")
+    console.log(count)
+    media_recorder = new MediaRecorder(camera_stream, { mimeType: 'video/webm' });
+
+    // event : new recorded video blob available 
+    media_recorder.addEventListener('dataavailable', function(e) {
+    time_frame_video.push(Date.now())
+    if (count == 0){
+		blobs_recorded.push(e.data);
+    } else if (count==1){
+    blobs_recorded_1.push(e.data);
+    } else if (count==2){
+    blobs_recorded_2.push(e.data);
+    } else if (count==3){
+    blobs_recorded_3.push(e.data);
+    } else if (count==4){
+    blobs_recorded_4.push(e.data);
+    } else if (count==5){
+    blobs_recorded_5.push(e.data);
+    } else if (count==6){
+    blobs_recorded_6.push(e.data);
+    } else if (count==7){
+    blobs_recorded_7.push(e.data);
+    }
+    
+    let time = new Date().getTime();
+    videoStart.push(time)
+        // console.log(e)
+        // console.log("NEW FRAME ADDED")
+    });
+
+    // event : recording stopped & all blobs sent
+    media_recorder.addEventListener('stop', function() {
+    	// create local object URL from the recorded video blobs
+      let time = new Date().getTime();
+      // console.log('Record stopped:'+time)
+    	// let video_local = URL.createObjectURL(new Blob(blobs_recorded, { type: 'video/webm' }));
+      videoStart.push(time)
+      uploadVideo() 
+      
+
+
+      // downloadURI(video_local, "test.webm");
+      // download_link.href = video_local;
+    });
+
+    // start recording with each recorded blob having 1 second video
+    media_recorder.start(1);
+    let time = new Date().getTime();
+    console.log('Video started:'+time);
+    videoStart.push(time)
+}
+
+function stopRecording(){
+  console.log("Stop Recording")
+  media_recorder.stop()
+  
+}
+
+function startCountdown(seconds) {
+  let counter = seconds;
+    
+  const interval = setInterval(() => {
+    console.log(counter);
+    counter--;
+      
+    if (counter == 0 ) {
+        console.log("recording done")
+        media_recorder.stop()
+    }
+  }, 1000);
+}
+let videoUploadComplete = false
+// const uploadVideo = async () => {
+//         console.log("UPLOAD VIDEO")
+//         console.log(count)
+//         try {
+//             reportStatus("Uploading files...");
+//             const promises = [];
+//             // if (count == 0){
+//             // filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + "distance"
+//             // } else{
+//             filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + "calibration"
+//             // }
+//             filename = filename.replaceAll('.','deci') + ".webm"
+//             console.log(filename)
+//             if (count == 0){
+//               file = new Blob(blobs_recorded, { type: 'video/webm' })
+//             } else if (count==1){
+//               file = new Blob(blobs_recorded_1, { type: 'video/webm' })
+//             } else if (count==2){
+//               file = new Blob(blobs_recorded_2, { type: 'video/webm' })
+//             } else if (count==3){
+//               file = new Blob(blobs_recorded_3, { type: 'video/webm' })
+//             } else if (count==4){
+//               file = new Blob(blobs_recorded_4, { type: 'video/webm' })
+//             } else if (count==5){
+//               blobs_recorded = []
+//               blobs_recorded_1 = []
+//               blobs_recorded_2 = []
+//               blobs_recorded_3 = []
+//             file = new Blob(blobs_recorded_5, { type: 'video/webm' })
+//             } else if (count==6){
+//             file = new Blob(blobs_recorded_6, { type: 'video/webm' })
+//             } else if (count==7){
+//             file = new Blob(blobs_recorded_7, { type: 'video/webm' })
+//             }
+
+
+//             // file = new Blob(blobs_recorded, { type: 'video/webm' })
+//             // for (const file of fileInput.files) {
+//                 const blockBlobURL = azblob.BlockBlobURL.fromContainerURL(containerURL, filename);
+//                 promises.push(azblob.uploadBrowserDataToBlockBlob(
+//                     azblob.Aborter.none, file, blockBlobURL));
+//             // }
+//             await Promise.all(promises);
+//             reportStatus("Done.");
+//             videoUploadComplete = true
+//             // listFiles();
+//         } catch (error) {
+//             reportStatus(error.body.message);
+//         }
+// }
+
+
+const uploadVideo = async () => {
+        console.log("UPLOAD VIDEO")
+        console.log(count)
+        try {
+            reportStatus("Uploading files...");
+            const promises = [];
+            // if (count == 0){
+            // filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + "distance"
+            // } else{
+            filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX 
+            // }
+            filename = filename.replaceAll('.','deci') + ".webm"
+            console.log(filename)
+            if (count == 0){
+              file = new Blob(blobs_recorded, { type: 'video/webm' })
+            } else if (count==1){
+              file = new Blob(blobs_recorded_1, { type: 'video/webm' })
+            } else if (count==2){
+              file = new Blob(blobs_recorded_2, { type: 'video/webm' })
+            } else if (count==3){
+              file = new Blob(blobs_recorded_3, { type: 'video/webm' })
+            } else if (count==4){
+              file = new Blob(blobs_recorded_4, { type: 'video/webm' })
+            } else if (count==5){
+              blobs_recorded = []
+              blobs_recorded_1 = []
+              blobs_recorded_2 = []
+              blobs_recorded_3 = []
+            file = new Blob(blobs_recorded_5, { type: 'video/webm' })
+            } else if (count==6){
+            file = new Blob(blobs_recorded_6, { type: 'video/webm' })
+            } else if (count==7){
+            file = new Blob(blobs_recorded_7, { type: 'video/webm' })
+            }
+            // const videoBlob = new Blob(videoData, { type: 'video/webm' });
+
+
+const url = window.URL.createObjectURL(file);
+const a = document.createElement('a');
+a.style.display = 'none';
+a.href = url;
+a.download = filename;
+document.body.appendChild(a);
+a.click();
+window.URL.revokeObjectURL(url);
+reportStatus("Done.");
+
+  document.getElementById("hero").style.display = "none"
+  document.getElementById("screen").style.display = "block"
+// videoUploadComplete = true;
+} catch (error) {
+reportStatus(error.message);
+}
+}
+
+
+const reportStatus = message => {
+    status.innerHTML += `${message}<br/>`;
+    status.scrollTop = status.scrollHeight;
+}
+let textUploadComplete = false
+const uploadText = async () => {
+        console.log("UPLOAD CSV")
+        try {
+            reportStatus("Uploading files...");
+            const promises = [];
+            // const array = ['<a id="a"><b id="b">hey!</b></a>'];
+            // file = new Blob(array, {type : 'text/html'});
+            filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + "calibration"
+            filename = filename.replaceAll('.','deci') + ".csv"
+            file = new Blob([time_frame_video + '\r\n'+ xArray+'\r\n'+yArray + '\r\n' + timeArray + '\r\n' + videoStart], { type: 'text/plain' })
+            // for (const file of fileInput.files) {
+                const blockBlobURL = azblob.BlockBlobURL.fromContainerURL(containerURL, filename);
+                promises.push(azblob.uploadBrowserDataToBlockBlob(
+                    azblob.Aborter.none, file, blockBlobURL));
+            // }
+            await Promise.all(promises);
+            reportStatus("Done.");
+            textUploadComplete = true;
+            // listFiles();
+        } catch (error) {
+            reportStatus(error.body.message);
+        }
+}
+
+
+
+// document.getElementById("startTestButton").addEventListener("click", uploadVideo)
+
+function downloadURI(uri, name) {
+  var link = document.createElement("a");
+  link.download = name;
+  link.href = uri;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  delete link;
+}
+
+function toUnicodeVariant(str, variant, flags) {
+    const offsets = {
+        m: [0x1d670, 0x1d7f6],
+        b: [0x1d400, 0x1d7ce],
+        i: [0x1d434, 0x00030],
+        bi: [0x1d468, 0x00030],
+        c: [0x1d49c, 0x00030],
+        bc: [0x1d4d0, 0x00030],
+        g: [0x1d504, 0x00030],
+        d: [0x1d538, 0x1d7d8],
+        bg: [0x1d56c, 0x00030],
+        s: [0x1d5a0, 0x1d7e2],
+        bs: [0x1d5d4, 0x1d7ec],
+        is: [0x1d608, 0x00030],
+        bis: [0x1d63c, 0x00030],
+        o: [0x24B6, 0x2460],
+        p: [0x249C, 0x2474],
+        w: [0xff21, 0xff10],
+        u: [0x2090, 0xff10]
+    }
+
+    const variantOffsets = {
+        'monospace': 'm',
+        'bold': 'b',
+        'italic': 'i',
+        'bold italic': 'bi',
+        'script': 'c',
+        'bold script': 'bc',
+        'gothic': 'g',
+        'gothic bold': 'bg',
+        'doublestruck': 'd',
+        'sans': 's',
+        'bold sans': 'bs',
+        'italic sans': 'is',
+        'bold italic sans': 'bis',
+        'parenthesis': 'p',
+        'circled': 'o',
+        'fullwidth': 'w'
+    }
+
+    // special characters (absolute values)
+    var special = {
+        m: {
+            ' ': 0x2000,
+            '-': 0x2013
+        },
+        i: {
+            'h': 0x210e
+        },
+        g: {
+            'C': 0x212d,
+            'H': 0x210c,
+            'I': 0x2111,
+            'R': 0x211c,
+            'Z': 0x2128
+        },
+        o: {
+            '0': 0x24EA,
+            '1': 0x2460,
+            '2': 0x2461,
+            '3': 0x2462,
+            '4': 0x2463,
+            '5': 0x2464,
+            '6': 0x2465,
+            '7': 0x2466,
+            '8': 0x2467,
+            '9': 0x2468,
+        },
+        p: {},
+        w: {}
+    }
+    //support for parenthesized latin letters small cases 
+    for (var i = 97; i <= 122; i++) {
+        special.p[String.fromCharCode(i)] = 0x249C + (i - 97)
+    }
+    //support for full width latin letters small cases 
+    for (var i = 97; i <= 122; i++) {
+        special.w[String.fromCharCode(i)] = 0xff41 + (i - 97)
+    }
+
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+
+    var getType = function (variant) {
+        if (variantOffsets[variant]) return variantOffsets[variant]
+        if (offsets[variant]) return variant;
+        return 'm'; //monospace as default
+    }
+    var getFlag = function (flag, flags) {
+        if (!flags) return false
+        return flags.split(',').indexOf(flag) > -1
+    }
+
+    var type = getType(variant);
+    var underline = getFlag('underline', flags);
+    var strike = getFlag('strike', flags);
+    var result = '';
+
+    for (var k of str) {
+        let index
+        let c = k
+        if (special[type] && special[type][c]) c = String.fromCodePoint(special[type][c])
+        if (type && (index = chars.indexOf(c)) > -1) {
+            result += String.fromCodePoint(index + offsets[type][0])
+        } else if (type && (index = numbers.indexOf(c)) > -1) {
+            result += String.fromCodePoint(index + offsets[type][1])
+        } else {
+            result += c
+        }
+        if (underline) result += '\u0332' // add combining underline
+        if (strike) result += '\u0336' // add combining strike
+    }
+    return result
+}
+
+</script>
