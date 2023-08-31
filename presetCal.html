@@ -45,7 +45,7 @@
                 <input type="text" id="idInput" name="idInput" required
                       minlength="1" maxlength="100" size="10">
                   </br></br>
-                <button type="button" class="btn btn-primary" id="start-test" onclick="continueToTest()">Confirm</button>
+                <button type="button" class="btn btn-primary" id="start-test" onclick="deviceEntered()">Confirm</button>
               </div>
             </div>
           </div>          
@@ -814,6 +814,8 @@ function getImageLightness(imageSrc,callback) {
 let camera_button = document.querySelector("#start-camera");
 
 camera_button.addEventListener('click', async function() {
+  continueToTest()
+  
    	camera_stream = await navigator.mediaDevices.getUserMedia({video: {
         width: { ideal: 2000 },
         height: { ideal: 2000 } ,
@@ -913,9 +915,15 @@ function draw() {
 
 }
 
+function deviceEntered(){
+  prolificID = idInput_textbox.value
+  console.log(prolificID)
+  cardid.style.backgroundColor = '#bcf5bc'
+}
+
 function continueToTest(){
   // video.remove()
-  prolificID = idInput_textbox.value
+  // prolificID = idInput_textbox.value
 
   localStorage.prolificID = prolificID
   localStorage.screenHeightcm = screenHeight
