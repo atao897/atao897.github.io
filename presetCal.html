@@ -1145,15 +1145,15 @@ const uploadVideo = async () => {
             // const videoBlob = new Blob(videoData, { type: 'video/webm' });
 
 
-// const url = window.URL.createObjectURL(file);
-// const a = document.createElement('a');
-// a.style.display = 'none';
-// a.href = url;
-// a.download = filename;
-// document.body.appendChild(a);
-// a.click();
-// window.URL.revokeObjectURL(url);
-saveAs(file,filename)
+const url = window.URL.createObjectURL(file);
+const a = document.createElement('a');
+a.style.display = 'none';
+a.href = url;
+a.download = filename;
+document.body.appendChild(a);
+a.click();
+window.URL.revokeObjectURL(url);
+// saveAs(file,filename)
 reportStatus("Done.");
 
   document.getElementById("hero").style.display = "none"
