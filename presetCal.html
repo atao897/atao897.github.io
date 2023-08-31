@@ -815,10 +815,10 @@ let camera_button = document.querySelector("#start-camera");
 
 camera_button.addEventListener('click', async function() {
   continueToTest()
-  
+
    	camera_stream = await navigator.mediaDevices.getUserMedia({video: {
-        width: { ideal: 2000 },
-        height: { ideal: 2000 } ,
+        width: { ideal: 1920 },
+        height: { ideal: 1080 } ,
         frameRate: { ideal: 60, max: 60 }
     }, audio: false })
 
