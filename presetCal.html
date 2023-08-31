@@ -819,7 +819,7 @@ camera_button.addEventListener('click', async function() {
    	camera_stream = await navigator.mediaDevices.getUserMedia({video: {
         width: { ideal: 1920 },
         height: { ideal: 1080 } ,
-        frameRate: { ideal: 60, max: 60 }
+        // frameRate: { ideal: 60, max: 60 }
     }, audio: false })
 
     // camera_stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
