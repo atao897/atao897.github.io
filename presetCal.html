@@ -978,7 +978,17 @@ async function startRecording(){
     count = count + 1;
     console.log("Start Recording")
     console.log(count)
-    media_recorder = new MediaRecorder(camera_stream, { mimeType: 'video/webm' });
+
+    let mimeType = 'video/webm';
+    if (MediaRecorder.isTypeSupported('video/mp4')) {
+        console.log('VIDEO MP4')
+        mimeType = 'video/mp4';
+    } else if (MediaRecorder.isTypeSupported('video/quicktime')) {
+        mimeType = 'video/quicktime';
+    }
+
+
+    media_recorder = new MediaRecorder(camera_stream, { mimeType: mimeType});
 
     // event : new recorded video blob available 
     media_recorder.addEventListener('dataavailable', function(e) {
