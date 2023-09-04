@@ -640,7 +640,8 @@ function fixationTask(){
 
      instruction.style.display = "block"
      stimulus.style.display = "none"
-     stopWriting()
+     setTimeout(stopWriting(), 1000)
+
      stopRecording()
      videoStart = []
      resetMovement()
@@ -742,6 +743,7 @@ function moveImage(){
   if (counter<2500){
   setTimeout(moveImage, 10);
   } else {
+    
     stopWriting()
     stopRecording()
     videoStart = []

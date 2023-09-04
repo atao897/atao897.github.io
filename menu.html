@@ -82,6 +82,7 @@ button:disabled {
 
 <div class="button-container">
 <h3>Depth Collection</h3>
+<button id="depth-30-btn" type="button" onclick="startMeasurement('30')">Measurement @ 30cm (dur: 1.5 mins)</button>
 <button id="depth-40-btn" type="button" onclick="startMeasurement('40')">Measurement @ 40cm (dur: 1.5 mins)</button>
 <button id="depth-50-btn" type="button" onclick="startMeasurement('50')">Measurement @ 50cm (dur: 1.5 mins)</button>
 <button id="depth-60-btn" type="button" onclick="startMeasurement('60')">Measurement @ 60cm (dur: 1.5 mins)</button>
@@ -116,6 +117,14 @@ document.addEventListener("DOMContentLoaded", function() {
     var btn = document.getElementById("fixation-btn");
     if (btn) {
         btn.style.backgroundColor = "green"
+    }
+  }
+
+
+  if (localStorage.depth_thirty === "true") {
+    var btn = document.getElementById("depth-30-btn");
+    if (btn) {
+      btn.style.backgroundColor = "green"
     }
   }
 
