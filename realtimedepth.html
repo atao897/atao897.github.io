@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+  <!-- <link rel="shortcut icon" href="favicon.ico" /> -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.1/control_utils.css" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" type="text/css" href="demo.css" crossorigin="anonymous"> -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <!-- CONTENTS -->
+  <div class="container" style="margin-top: 20px;">
+    
+      <div class="panel-block" style="display: none";>
+        <video class="input_video2"></video>
+      </div>
+
+    <!-- MEDIAPIPE OUTPUT -->
+    <article class="panel is-info">
+      <p class="panel-heading" style="position:relative;display: flex; align-items: center; justify-content: center">
+        Measuring Distance
+      </p>
+      <div class="panel-block" style="position:relative;display: flex; align-items: center; justify-content: center">
+          <canvas class="output2" width="480px" height="480px"></canvas>
+      </div>
+    </article>
+
+
+        <div class="control_focalLength" style="align-items: center; justify-content: center">
+              <label class="label has-text-centered" style="align-items: center; justify-content: center">Normalized Focal Length</label>
+              <p class="has-text-centered">
+                The Norm. Focal Length determines the scaling factor for converting iris measurements to actual distance. The default value is <b><span style='color: red;'>1.3</span></b>, calibrated for a Logitech C990 using a checkerboard calibration offline. <br></br>                <input id="focalLengthSlider" class="slider is-fullwidth is-info has-text-centered" style="text-align:center; width: 500px;
+                margin:0 auto; " type="range" min="0.5" max="2" step="0.05" value="1.3">
+                <output id="focalLengthOutput" class="has-text-centered">1.3</output>
+              </p>
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Device</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <select id="deviceDropdown">
+              <option value="custom">Custom</option>
+              <option value="chromebook">Chromebook</option>
+              <option value="ipad">iPad</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+
+        
+    <div class="loading">
+      <div class="spinner"></div>
+    </div>
+  <div style="visibility: hidden;" class="control2">
+  </div>
+
+  <script type="text/javascript" src="./js/index.js"></script>
+  <script>document.getElementById('deviceDropdown').addEventListener('change', function() {
+    var slider = document.getElementById('focalLengthSlider');
+    var output = document.getElementById('focalLengthOutput');
+    
+    switch(this.value) {
+        case 'chromebook':
+            slider.value = 1.4699;
+            output.innerHTML = 1.4699;
+            break;
+        case 'ipad':
+            slider.value = 1.1679;
+            output.innerHTML = 1.1679;
+            break;
+        default:
+            // Do nothing, keep it at user's last setting or default
+            break;
+    }
+
+    normalizedFocalLength = parseFloat(slider.value);
+
+});
+</script>
+</body>
+</html>
