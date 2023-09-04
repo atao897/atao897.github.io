@@ -636,12 +636,14 @@ function fixationTask(){
   setTimeout(fixationTask, 10);
   } else {
     //  instruction.innerHTML = "<strong>Data now uploading, please wait a few seconds.<strong>"
-    instruction.innerHTML = "<strong>Please ensure the data has been downloaded before heading back to menu.<strong>" + '<br></br><button type="button" class="btn btn-primary" id="backtomenubutton" onclick="backtoMenu()">Back to Menu</button>'
+    instruction.innerHTML = "<strong>Please download both files before heading back to menu.<strong>" + 
+      '<br></br><button type="button" class="btn btn-primary" id="downloadvideobutton" onclick="downloadvideo_action()">Download Video</button>' + 
+      '<br></br><button type="button" class="btn btn-primary" id="downloadtextbutton" onclick="downloadtext_action()">Download Text</button>' +
+      '<br></br><button type="button" class="btn btn-primary" id="backtomenubutton" onclick="backtoMenu()" disabled>Back to Menu</button>'
 
      instruction.style.display = "block"
      stimulus.style.display = "none"
-     setTimeout(stopWriting(), 1000)
-
+    //  stopWriting()
      stopRecording()
      videoStart = []
      resetMovement()
@@ -690,6 +692,24 @@ function fixationTask(){
 
 }
 
+var bdownloadvideo_action = false
+var bdownloadtext_action = false
+function downloadvideo_action(){
+  uploadVideo()
+  bdownloadvideo_action = true
+
+  if (bdownloadtext_action==true && bdownloadvideo_action==true){
+    document.getElementById("backtomenubutton").disabled = false
+  }
+}
+
+function downloadtext_action(){
+  uploadText()
+  bdownloadtext_action = true
+  if (bdownloadtext_action==true && bdownloadvideo_action==true){
+    document.getElementById("backtomenubutton").disabled = false
+  }
+}
 
 function backtoMenu(){
 
@@ -1162,7 +1182,7 @@ async function startRecording(){
       // console.log('Record stopped:'+time)
     	// let video_local = URL.createObjectURL(new Blob(blobs_recorded, { type: 'video/webm' }));
       videoStart.push(time)
-      uploadVideo() 
+      // uploadVideo() 
       
 
 
