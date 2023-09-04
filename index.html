@@ -35,6 +35,16 @@
     <h1 class="display-5 fw-bold" id="title">Eye Tracking Collection</h1>
     <div class="col-lg-6 mx-auto">
       <p class="lead mt-3 mb-5">This study should take approximately 5 mins. Please complete each step in the order shown below.</p>
+
+      <form>
+        <b>Select preconfigured DEVICE using the dropdown list:</b>
+        <select id="deviceList" onchange="selectDevice()">
+            <option value="custom">custom</option>
+            <option value="chromebook">chromebook</option>
+            <option value="ipad">iPad</option>
+        </select>
+      </form>
+
       <div class="d-grid gap-2 justify-content-center">
         <div class="row gap-2">
           <div class="col" >
@@ -118,7 +128,7 @@
                     (Face close to camera and centered with clear view of eyes)
                 </div>
                 <div class="container">
-                  <video autoplay="true" id="videoElement" style="width:50%; background-color: darkgray;">
+                  <video autoplay="true" id="videoElement" style="width:75%; background-color: darkgray;">
                   </video>
                 </div>
 
@@ -173,6 +183,85 @@
   </body>
 
 <script>
+
+function selectDevice() {
+        var dropdown = document.getElementById("deviceList");
+        var selectedValue = dropdown.options[dropdown.selectedIndex].value;
+        
+        switch (selectedValue) {
+            case "chromebook":
+                handleChromebook();
+                break;
+            case "ipad":
+                handleIpad();
+                break;
+            default:
+                handleCustom();
+        }
+    }
+
+function handleChromebook(){
+  console.log("You selected a chromebook");
+  screenHeight = '16.2'
+  screenWidth = '29'
+  webcamHeight = '0.5'
+
+  // screensize 
+  screenSizeCalibrated = true
+  cardScreenSize.style.backgroundColor = '#bcf5bc'
+
+  // webcam centered
+  webcamCentered = true
+  cardwebcamCenter.style.backgroundColor = '#bcf5bc'
+
+  // height of webcam
+  HeightWebcamEntered = true
+  heightInput_textbox.value = webcamHeight
+  heightInput_textbox.disabled = true
+  cardheightcamera.style.backgroundColor = '#bcf5bc'
+}
+
+function handleIpad(){
+  console.log("You selected an iPad");
+  screenHeight = '20.5'
+  screenWidth = '15.5'
+  webcamHeight = '1'
+
+  // screensize 
+  screenSizeCalibrated = true
+  cardScreenSize.style.backgroundColor = '#bcf5bc'
+
+  // webcam centered
+  webcamCentered = true
+  cardwebcamCenter.style.backgroundColor = '#bcf5bc'
+
+  // height of webcam
+  HeightWebcamEntered = true
+  heightInput_textbox.value = webcamHeight
+  heightInput_textbox.disabled = true
+  cardheightcamera.style.backgroundColor = '#bcf5bc'
+}
+
+function handleCustom(){
+  console.log("You selected an Custom");
+  screenHeight = ''
+  screenWidth = ''
+  webcamHeight = ''
+
+    // screensize 
+  screenSizeCalibrated = false
+  cardScreenSize.style.backgroundColor = '#FFFFFF'
+
+  // webcam centered
+  webcamCentered = false
+  cardwebcamCenter.style.backgroundColor = '#FFFFFF'
+
+  // height of webcam
+  HeightWebcamEntered = false
+  heightInput_textbox.value = ''
+  heightInput_textbox.disabled = false
+  cardheightcamera.style.backgroundColor = '#FFFFFF'
+}
 
 function makeid(length) {
     var result           = '';
@@ -774,9 +863,12 @@ function getImageLightness(imageSrc,callback) {
 let camera_button = document.querySelector("#start-camera");
 
 camera_button.addEventListener('click', async function() {
-   	// camera_stream = await navigator.mediaDevices.getUserMedia({ video: {width: { ideal: 1920 },
-        // height: { ideal: 1080 } }, audio: false })
-    camera_stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+  camera_stream = await navigator.mediaDevices.getUserMedia({video: {
+        width: { ideal: 1920 },
+        height: { ideal: 1080 } ,
+        frameRate: { ideal: 60, max: 60 }
+    }, audio: false })
+    // camera_stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
     console.log(camera_stream.getVideoTracks().length)
 
     if (camera_stream.getVideoTracks().length > 0){
@@ -871,8 +963,10 @@ function continueToTest(){
   prolificID = idInput_textbox.value
 
   localStorage.prolificID = prolificID
-  localStorage.screenHeightcm = screenHeight
-  localStorage.screenWidthcm = screenWidth
+  // localStorage.screenHeightcm = screenHeight
+  // localStorage.screenWidthcm = screenWidth
+  localStorage.screenHeight = screenHeight
+  localStorage.screenWidth = screenWidth
   localStorage.webcamHeight = webcamHeight
   localStorage.distance = distance
   localStorage.videoCompleted = false

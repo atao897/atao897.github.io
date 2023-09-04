@@ -214,7 +214,11 @@ function adjustRing(value) {
 
 function giveAccess() {
   // Request access to the camera
-  navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+  navigator.mediaDevices.getUserMedia({video: {
+        width: { ideal: 1920 },
+        height: { ideal: 1080 } ,
+        frameRate: { ideal: 60, max: 60 }
+    }, audio: false })
     .then(function(stream) {
       // If permission is granted, disable the "Give Access" button
       document.getElementById("giveAccessButton").disabled = true;
@@ -285,6 +289,10 @@ const containerURL = new azblob.ContainerURL(
 // --- Will be shifted to test functions
 var instruction = document.getElementById("instruction")
 var stimulus = document.getElementById("stimulus")
+
+stimulus.width = (parseFloat(localStorage.screenWidthPX) / parseFloat(localStorage.screenWidth)) * Math.tan((1 * Math.PI) / 180) * parseFloat(groundDistance)
+stimulus.height = (parseFloat(localStorage.screenHeightPX) / parseFloat(localStorage.screenHeight)) * Math.tan((1 * Math.PI) / 180) * parseFloat(groundDistance)
+
 var ringContainer = document.getElementById("ringContainer")
 var x = document.getElementById("stimulus").style.left;
 var y = document.getElementById("stimulus").style.top;
@@ -297,6 +305,7 @@ counter = 0
 xArray = []
 yArray = []
 timeArray = []
+shiftStage = []
 
 
 function startTest(){
@@ -503,16 +512,22 @@ function calibrationTask(){
     timeArray.push(time)
     xArray.push(x)
     yArray.push(y)
+    shiftStage.push(100)
 
     stimulus.style.left = x +'%';
     stimulus.style.top = y +'%';
     ringContainer.style.left = x +'%';
     ringContainer.style.top = y +'%';
 
+  // if (y<75){
   if (y<75){
   setTimeout(calibrationTask, 10);
   } else {
     counter = 0
+    shift = shift_x[fixationTask_index]
+    x = fixation_x[fixationTask_index]
+    y = fixation_y[fixationTask_index]
+    console.log('New Shift', shift)
     fixationTask()
 
 //     instruction.innerHTML = "<strong>Data now uploading, please wait a few seconds.<strong>"
@@ -564,38 +579,65 @@ function calibrationTask(){
 // fixation_x = [75,75,25,25,75,25,50,50,75,50,25,50,75,50,25,50,25,75,0]
 // fixation_y = [75,50,50,75,25,25,75,50,75,75,50,50,50,25,75,25,25,25,0]
 
-fixation_x = [25,37.5,50,62.5,75,25,37.5,50,62.5,75,25,37.5,50,62.5,75,25,37.5,50,62.5,75,0]
-fixation_y = [16,16,16,16,16,32,32,32,32,32,48,48,48,48,48,65,65,65,65,65,0]
+// fixation_x = [25,37.5,50,62.5,75,25,37.5,50,62.5,75,25,37.5,50,62.5,75,25,37.5,50,62.5,75,0]
+// fixation_y = [16,16,16,16,16,32,32,32,32,32,48,48,48,48,48,65,65,65,65,65,0]
 
+// fixation_x = [20,40,60,80,20,40,60,80,20,40,60,80, 40, 80, 40, 80, 20, 60, 60, 20, 60, 80, 40, 20]
+// fixation_y = [20,20,20,20,40,40,40,40,60,60,60,60, 20, 40, 40, 60, 40, 60, 40, 20, 20, 20, 60, 60]
+
+
+
+var onedeg = (parseFloat(localStorage.screenWidthPX) / parseFloat(localStorage.screenWidth)) * Math.tan((1 * Math.PI) / 180) * parseFloat(groundDistance)
+var twodeg = (parseFloat(localStorage.screenWidthPX) / parseFloat(localStorage.screenWidth)) * Math.tan((2 * Math.PI) / 180) * parseFloat(groundDistance)
+var threedeg = (parseFloat(localStorage.screenWidthPX) / parseFloat(localStorage.screenWidth)) * Math.tan((3 * Math.PI) / 180) * parseFloat(groundDistance)
+
+onedeg = (onedeg/parseFloat(localStorage.screenWidthPX))*100
+twodeg = (twodeg/parseFloat(localStorage.screenWidthPX))*100
+threedeg = (threedeg/parseFloat(localStorage.screenWidthPX))*100
+
+shift_x = [0, 3, 0, 2, 0, -3, 0, 1, 0, -2, 0, -2, 0, 1, 0, 1, 0, -1, 0, 3, 0, -3, 0, -2, 0, 2, 0, -1, 0, 3, 0, 2, 0, -1, 0, -3,0]
+fixation_x = [65, 65+threedeg, 50, 50+twodeg, 65, 65-threedeg, 50, 50+onedeg, 50, 50-twodeg, 35, 35-twodeg, 35, 35+onedeg, 65, 65+onedeg, 35, 35-onedeg, 50, 50+threedeg, 35, 35-threedeg, 65, 65-twodeg, 35, 35+twodeg, 50, 50-onedeg, 35, 35+threedeg, 65, 65+twodeg, 65, 65-onedeg, 50, 50-threedeg,0]
+fixation_y = [30, 30, 30, 30, 30, 30, 40, 40, 30, 30, 50, 50, 30, 30, 50, 50, 30, 30, 50, 50, 40, 40, 40, 40, 50, 50, 40, 40, 40, 40, 40, 40, 50, 50, 50, 50,0]
+fixation_times = [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1,100]
+
+fixationTask_index = 0
 function fixationTask(){
-  if ((counter==0) ||  (counter%200)==0){
-  x = fixation_x[counter/200]
-  y = fixation_y[counter/200]
+  
+  if (counter==fixation_times[fixationTask_index]*100){
+    counter = 0
+    fixationTask_index = fixationTask_index + 1
+    shift = shift_x[fixationTask_index]
+    x = fixation_x[fixationTask_index]
+    y = fixation_y[fixationTask_index]
+    console.log('New Shift', shift)
   }
+  // if ((counter==0) ||  (counter%200)==0){
+  // x = fixation_x[counter/200]
+  // y = fixation_y[counter/200]
+  // }
 
   counter = counter + 1
-  adjustRing(counter%200)
+  // adjustRing(counter%200)
 
     let time = new Date().getTime();
 
     timeArray.push(time)
     xArray.push(x)
     yArray.push(y)
+    shiftStage.push(shift)
 
     stimulus.style.left = x +'%';
     stimulus.style.top = y +'%';
     ringContainer.style.left = x +'%';
     ringContainer.style.top = y +'%';
 
-  if (counter<4000){
+  // if (counter<4000){
+  if (fixationTask_index<36){
   setTimeout(fixationTask, 10);
   } else {
-    stopWriting()
-    stopRecording()
-    videoStart = []
-    resetMovement()
+    //  instruction.innerHTML = "<strong>Data now uploading, please wait a few seconds.<strong>"
+    instruction.innerHTML = "<strong>Please ensure the data has been downloaded before heading back to menu.<strong>" + '<br></br><button type="button" class="btn btn-primary" id="backtomenubutton" onclick="backtoMenu()">Back to Menu</button>'
 
-     instruction.innerHTML = "<strong>Data now uploading, please wait a few seconds.<strong>"
      instruction.style.display = "block"
      stimulus.style.display = "none"
      stopWriting()
@@ -606,6 +648,10 @@ function fixationTask(){
      const checkUploadStatus = () => {
      if (videoUploadComplete && textUploadComplete) {
        // Both uploads are complete, redirect to the menu page
+
+       if (groundDistance==="30"){
+        localStorage.depth_thirty = "true"
+      }
 
        if (groundDistance==="40"){
         localStorage.depth_fourty = "true"
@@ -619,17 +665,17 @@ function fixationTask(){
         localStorage.depth_sixty = "true"
       }
 
-       window.location.href = "menu.html";
+      //  window.location.href = "menu.html";
+      
+
      } else {
        // Keep checking after a delay of 1 second
        setTimeout(checkUploadStatus, 1000);
      }
    };
 
-   checkUploadStatus(); 
+  //  checkUploadStatus(); 
 };
-
-
 //     testNumber = testNumber + 1
 //     document.getElementById("testNumberText").innerHTML = "<strong>Test " + testNumber + "/7</strong>"
     
@@ -641,6 +687,30 @@ function fixationTask(){
 //     instruction.style.display = "block"
 //   }
 
+}
+
+
+function backtoMenu(){
+
+  if (groundDistance == "30"){
+    localStorage.depth_thirty = "true"
+  }
+  if (groundDistance==="40"){
+        localStorage.depth_fourty = "true"
+      }
+
+      if (groundDistance==="50"){
+        localStorage.depth_fifty = "true"
+      }
+
+      if (groundDistance==="60"){
+        localStorage.depth_sixty = "true"
+      }
+
+    
+
+
+  window.location.href = "menu.html";
 }
 
 var stopFive = 0
@@ -1043,6 +1113,17 @@ async function startRecording(){
     count = count + 1;
     console.log("Start Recording")
     console.log(count)
+
+    let mimeType = 'video/webm';
+    if (MediaRecorder.isTypeSupported('video/mp4')) {
+        console.log('VIDEO MP4')
+        mimeType = 'video/mp4';
+    } else if (MediaRecorder.isTypeSupported('video/quicktime')) {
+        mimeType = 'video/quicktime';
+    }
+
+
+
     media_recorder = new MediaRecorder(camera_stream, { mimeType: 'video/webm' });
 
     // event : new recorded video blob available 
@@ -1113,16 +1194,76 @@ function startCountdown(seconds) {
   }, 1000);
 }
 let videoUploadComplete = false
+// const uploadVideo = async () => {
+//         console.log("UPLOAD VIDEO")
+//         console.log(count)
+//         try {
+//             reportStatus("Uploading files...");
+//             const promises = [];
+//             // if (count == 0){
+//             // filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + "distance"
+//             // } else{
+//             filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + groundDistance
+//             // }
+//             filename = filename.replaceAll('.','deci') + ".webm"
+//             console.log(filename)
+//             if (count == 0){
+//               file = new Blob(blobs_recorded, { type: 'video/webm' })
+//             } else if (count==1){
+//               file = new Blob(blobs_recorded_1, { type: 'video/webm' })
+//             } else if (count==2){
+//               file = new Blob(blobs_recorded_2, { type: 'video/webm' })
+//             } else if (count==3){
+//               file = new Blob(blobs_recorded_3, { type: 'video/webm' })
+//             } else if (count==4){
+//               file = new Blob(blobs_recorded_4, { type: 'video/webm' })
+//             } else if (count==5){
+//               blobs_recorded = []
+//               blobs_recorded_1 = []
+//               blobs_recorded_2 = []
+//               blobs_recorded_3 = []
+//             file = new Blob(blobs_recorded_5, { type: 'video/webm' })
+//             } else if (count==6){
+//             file = new Blob(blobs_recorded_6, { type: 'video/webm' })
+//             } else if (count==7){
+//             file = new Blob(blobs_recorded_7, { type: 'video/webm' })
+//             }
+
+
+//             // file = new Blob(blobs_recorded, { type: 'video/webm' })
+//             // for (const file of fileInput.files) {
+//                 const blockBlobURL = azblob.BlockBlobURL.fromContainerURL(containerURL, filename);
+//                 promises.push(azblob.uploadBrowserDataToBlockBlob(
+//                     azblob.Aborter.none, file, blockBlobURL));
+//             // }
+//             await Promise.all(promises);
+//             reportStatus("Done.");
+//             videoUploadComplete = true
+//             // listFiles();
+//         } catch (error) {
+//             reportStatus(error.body.message);
+//         }
+// }
+
+
 const uploadVideo = async () => {
         console.log("UPLOAD VIDEO")
         console.log(count)
+
+        let mimeType = 'video/webm';
+        if (MediaRecorder.isTypeSupported('video/mp4')) {
+            mimeType = 'video/mp4';
+        } else if (MediaRecorder.isTypeSupported('video/quicktime')) {
+            mimeType = 'video/quicktime';
+        }
+
         try {
             reportStatus("Uploading files...");
             const promises = [];
             // if (count == 0){
             // filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + "distance"
             // } else{
-            filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + groundDistance
+            filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + groundDistance
             // }
             filename = filename.replaceAll('.','deci') + ".webm"
             console.log(filename)
@@ -1147,52 +1288,83 @@ const uploadVideo = async () => {
             } else if (count==7){
             file = new Blob(blobs_recorded_7, { type: 'video/webm' })
             }
+            // const videoBlob = new Blob(videoData, { type: 'video/webm' });
 
 
-            // file = new Blob(blobs_recorded, { type: 'video/webm' })
-            // for (const file of fileInput.files) {
-                const blockBlobURL = azblob.BlockBlobURL.fromContainerURL(containerURL, filename);
-                promises.push(azblob.uploadBrowserDataToBlockBlob(
-                    azblob.Aborter.none, file, blockBlobURL));
-            // }
-            await Promise.all(promises);
-            reportStatus("Done.");
-            videoUploadComplete = true
-            // listFiles();
-        } catch (error) {
-            reportStatus(error.body.message);
-        }
+const url = window.URL.createObjectURL(file);
+const a = document.createElement('a');
+a.style.display = 'none';
+a.href = url;
+
+filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + groundDistance
+// filename = filename.replaceAll('.','deci') + ".webm"
+filename = filename.replaceAll('.','deci') 
+
+a.download = filename;
+document.body.appendChild(a);
+a.click();
+window.URL.revokeObjectURL(url);
+reportStatus("Done.");
+// videoUploadComplete = true;
+} catch (error) {
+reportStatus(error.message);
+}
 }
 
 const reportStatus = message => {
     status.innerHTML += `${message}<br/>`;
     status.scrollTop = status.scrollHeight;
 }
-let textUploadComplete = false
-const uploadText = async () => {
-        console.log("UPLOAD CSV")
-        try {
-            reportStatus("Uploading files...");
-            const promises = [];
-            // const array = ['<a id="a"><b id="b">hey!</b></a>'];
-            // file = new Blob(array, {type : 'text/html'});
-            filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + groundDistance
-            filename = filename.replaceAll('.','deci') + ".csv"
-            file = new Blob([time_frame_video + '\r\n'+ xArray+'\r\n'+yArray + '\r\n' + timeArray + '\r\n' + videoStart], { type: 'text/plain' })
-            // for (const file of fileInput.files) {
-                const blockBlobURL = azblob.BlockBlobURL.fromContainerURL(containerURL, filename);
-                promises.push(azblob.uploadBrowserDataToBlockBlob(
-                    azblob.Aborter.none, file, blockBlobURL));
-            // }
-            await Promise.all(promises);
-            reportStatus("Done.");
-            textUploadComplete = true;
-            // listFiles();
-        } catch (error) {
-            reportStatus(error.body.message);
-        }
-}
 
+let textUploadComplete = false
+// THIS IS FOR AZURE
+// const uploadText = async () => {
+//         console.log("UPLOAD CSV")
+//         try {
+//             reportStatus("Uploading files...");
+//             const promises = [];
+//             // const array = ['<a id="a"><b id="b">hey!</b></a>'];
+//             // file = new Blob(array, {type : 'text/html'});
+//             filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.distance + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + groundDistance
+//             filename = filename.replaceAll('.','deci') + ".csv"
+//             file = new Blob([time_frame_video + '\r\n'+ xArray+'\r\n'+yArray + '\r\n' + timeArray + '\r\n' + videoStart], { type: 'text/plain' })
+//             // for (const file of fileInput.files) {
+//                 const blockBlobURL = azblob.BlockBlobURL.fromContainerURL(containerURL, filename);
+//                 promises.push(azblob.uploadBrowserDataToBlockBlob(
+//                     azblob.Aborter.none, file, blockBlobURL));
+//             // }
+//             await Promise.all(promises);
+//             reportStatus("Done.");
+//             textUploadComplete = true;
+//             // listFiles();
+//         } catch (error) {
+//             reportStatus(error.body.message);
+//         }
+// }
+
+const uploadText = () => {
+  try {
+    const csvData = [shiftStage,xArray, yArray, timeArray].join('\r\n');
+    const textBlob = new Blob([csvData], { type: 'text/plain' });
+
+    const url = window.URL.createObjectURL(textBlob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+
+    filename = localStorage.prolificID + "_" + localStorage.screenWidth + "_" + localStorage.screenHeight + "_" + localStorage.webcamHeight + "_" + localStorage.screenWidthPX + "_" + localStorage.screenHeightPX + "_" + groundDistance
+    filename = filename.replaceAll('.','deci') + ".csv"
+
+    a.download = filename
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    reportStatus("Done.");
+    textUploadComplete = true;
+  } catch (error) {
+    reportStatus(error.message);
+  }
+}
 
 
 // document.getElementById("startTestButton").addEventListener("click", uploadVideo)
