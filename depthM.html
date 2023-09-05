@@ -696,6 +696,8 @@ var bdownloadvideo_action = false
 var bdownloadtext_action = false
 function downloadvideo_action(){
   uploadVideo()
+  document.getElementById("downloadvideobutton").style.backgroundColor = "green"
+
   bdownloadvideo_action = true
 
   if (bdownloadtext_action==true && bdownloadvideo_action==true){
@@ -706,6 +708,8 @@ function downloadvideo_action(){
 function downloadtext_action(){
   uploadText()
   bdownloadtext_action = true
+  document.getElementById("downloadtextbutton").style.backgroundColor = "green"
+
   if (bdownloadtext_action==true && bdownloadvideo_action==true){
     document.getElementById("backtomenubutton").disabled = false
   }
