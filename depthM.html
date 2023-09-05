@@ -1146,7 +1146,7 @@ async function startRecording(){
 
 
 
-    media_recorder = new MediaRecorder(camera_stream, { mimeType: 'video/webm' });
+    media_recorder = new MediaRecorder(camera_stream, { mimeType: mimeType });
 
     // event : new recorded video blob available 
     media_recorder.addEventListener('dataavailable', function(e) {
@@ -1290,25 +1290,25 @@ const uploadVideo = async () => {
             filename = filename.replaceAll('.','deci') + ".webm"
             console.log(filename)
             if (count == 0){
-              file = new Blob(blobs_recorded, { type: 'video/webm' })
+              file = new Blob(blobs_recorded, { type: mimeType })
             } else if (count==1){
-              file = new Blob(blobs_recorded_1, { type: 'video/webm' })
+              file = new Blob(blobs_recorded_1, { type: mimeType })
             } else if (count==2){
-              file = new Blob(blobs_recorded_2, { type: 'video/webm' })
+              file = new Blob(blobs_recorded_2, { type: mimeType })
             } else if (count==3){
-              file = new Blob(blobs_recorded_3, { type: 'video/webm' })
+              file = new Blob(blobs_recorded_3, { type: mimeType })
             } else if (count==4){
-              file = new Blob(blobs_recorded_4, { type: 'video/webm' })
+              file = new Blob(blobs_recorded_4, { type: mimeType })
             } else if (count==5){
               blobs_recorded = []
               blobs_recorded_1 = []
               blobs_recorded_2 = []
               blobs_recorded_3 = []
-            file = new Blob(blobs_recorded_5, { type: 'video/webm' })
+            file = new Blob(blobs_recorded_5, { type: mimeType })
             } else if (count==6){
-            file = new Blob(blobs_recorded_6, { type: 'video/webm' })
+            file = new Blob(blobs_recorded_6, { type: mimeType })
             } else if (count==7){
-            file = new Blob(blobs_recorded_7, { type: 'video/webm' })
+            file = new Blob(blobs_recorded_7, { type: mimeType })
             }
             // const videoBlob = new Blob(videoData, { type: 'video/webm' });
 
