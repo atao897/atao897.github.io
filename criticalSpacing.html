@@ -1,0 +1,607 @@
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://www.hes.kyushu-u.ac.jp/~kurokid/QUEST/dist/jsQUEST.js"></script>
+
+
+<style>
+    @font-face {
+        font-family: 'Pelli';
+        src: url('fonts/Pelli.otf') format('opentype');
+    }
+    @font-face {
+        font-family: 'Sloan';
+        src: url('fonts/Sloan.otf') format('opentype');
+    }
+    
+    body {
+        margin: 0;
+        min-height: 100vh;  /* Ensure body takes the full viewport height */
+        display: flex;      /* Enable Flexbox */
+        justify-content: center;  /* Center content horizontally */
+        align-items: center;      /* Center content vertically */
+        font-family: sans-serif;
+    }
+    
+    .container {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .column {
+        text-align: center;
+    }
+    
+    .column:not(:last-child) {
+        margin-right: 1px; /* Adjust this to control the space between columns */
+    }
+    
+    .letter {
+        /* If needed, adjust line-height for tighter vertical spacing */
+        text-align: center;
+        line-height: 1;
+        padding: 0; /* Ensure no default padding */
+        margin: 0;  /* Ensure no default margins */
+    }
+
+    .row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+button {
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.container {
+    position: relative; /* This allows absolute positioning within it */
+    width: 100vw;       /* 100% of the viewport width */
+    height: 100vh;      /* 100% of the viewport height */
+    overflow: hidden;   /* Optional: Prevents any child elements from spilling out of the container */
+}
+
+
+.column {
+    position: absolute;
+}
+
+.hidden-container {
+    text-align: center;
+    display: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #fff;
+    position: absolute;
+}
+
+
+#topLetter {
+    position: absolute;
+    transform:translate(-50%, -50%); /* This will center the element horizontally */
+}
+
+#leftLetter {
+    position: absolute;
+    transform:translate(-50%, -50%);  /* This will center the element vertically */
+}
+
+#targetLetter {
+    position: absolute;
+    transform: translate(-50%, -50%); /* This will center the element both horizontally and vertically */
+}
+
+#fixationMarker {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* This will center the element both horizontally and vertically */
+}
+
+#rightLetter {
+    position: absolute;
+    transform: translate(-50%, -50%); /* This will center the element vertically */
+}
+
+#bottomLetter {
+    position: absolute;
+    transform: translate(-50%, -50%);  /* This will center the element horizontally */
+}
+
+</style>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const font_type = urlParams.get('fontType');
+const eccentricity = parseFloat(urlParams.get('eccentricity'));
+
+var logmar = 0
+var spacingFactor = 1.4
+var direction = 0
+var lowLogmar = convertCriticalSpacing_to_logmar(0.5) //0.3
+if (eccentricity === 0){
+    lowLogmar = convertCriticalSpacing_to_logmar(0.05) //0.3
+}
+var highLogmar = convertCriticalSpacing_to_logmar(3.5)
+if (eccentricity === 0){
+    highLogmar = convertCriticalSpacing_to_logmar(0.5) //0.3
+}
+var endTrialCount = 40
+var removeFlankers = false
+var elem = document.documentElement;
+
+
+function viewingDistance(){
+    PixelPerCm = Math.floor(localStorage.PixelPerCm);
+
+    // PixelPerCm = 1181/28.9 //choromebook (169cm)
+    // PixelPerCm = 810/15.5 //ipad portrait (15cm)
+    // PixelPerCm = 1080/20.7 //ipad portrait (15cm)
+
+    MinPermissiblelogMAR = lowLogmar;
+    MinLetterSizePixels = 8;
+    MinPermissLetterSizeArcMin= (Math.pow(10,MinPermissiblelogMAR) * 5);
+    MinPermissLetterSizeCm = MinLetterSizePixels/PixelPerCm;
+    lengthofhalfletter = MinPermissLetterSizeCm/2;
+    tan_angle = Math.tan((3.14/180)* (MinPermissLetterSizeArcMin/(60*2)))
+    LetterViewingDistance = lengthofhalfletter/tan_angle;
+
+    console.log('Min Viewing Distance',Number(LetterViewingDistance/100).toFixed(2) )
+    if (LetterViewingDistance<60){
+    localStorage.distance = 0.60
+    } else if (LetterViewingDistance<100){
+    localStorage.distance = 1
+    } else if (LetterViewingDistance<200){
+    localStorage.distance = 2
+    } else if (LetterViewingDistance<300){
+    localStorage.distance = 3
+    } else if (LetterViewingDistance<400){
+    localStorage.distance = 4
+    }
+}
+
+viewingDistance()
+
+// localStorage.screenWidthPX = 1920
+// localStorage.screenHeightPX = 1080
+// localStorage.screenWidth = 50.6
+// localStorage.distance = 0.60
+
+localStorage.PixelPerCm = localStorage.screenWidthPX/localStorage.screenWidth
+
+var trialCount = 0
+var pixels = 0
+var OneCmInDegrees = tanDegrees(0.5) * localStorage.distance * 100 * 2;
+var PixelsPerDegree = OneCmInDegrees * localStorage.PixelPerCm
+var font_options = []
+var answers = []
+if (font_type === "Pelli") {
+font_options = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+answers = font_options
+} else if (font_type === "Sloan") {
+font_options = ['C', 'D', 'H', 'K', 'N', 'O', 'R', 'S', 'V','Z']
+answers = font_options
+}
+
+var tGuess = convertCriticalSpacing_to_logmar(1.8)
+if (eccentricity == 0){
+    tGuess = convertCriticalSpacing_to_logmar(0.2)
+}
+var tGuessSd = 2
+var pThreshold = 0.82
+var beta = 2.3
+var delta = 0.01
+var gamma = 1/font_options.length
+var quest = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
+
+function updateStimsize(){
+    logmar = jsQUEST.QuestQuantile(quest)
+    if (logmar<lowLogmar){
+        logmar = lowLogmar
+    } else if (logmar>highLogmar){
+        logmar = highLogmar
+    }
+    return logmar
+}
+
+function updateQuest(logmar, response){
+    quest = jsQUEST.QuestUpdate(quest, logmar, response); 
+}
+
+function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+        }
+    }
+
+    
+
+function getCenterCoordinates(divId) {
+    var rect = document.getElementById(divId).getBoundingClientRect();
+
+    var centerX = rect.left + window.scrollX + (rect.width / 2);
+    var centerY = rect.top + window.scrollY + (rect.height / 2);
+
+    return {
+        x: centerX,
+        y: centerY
+    };
+}
+
+function directionChange() {
+    // Generate a random number between 0 and 1
+    const randomNumber = Math.random();
+
+    // Use a conditional statement to convert the random number to either 1 or -1
+    const directionChange = randomNumber < 0.5 ? 1 : -1;
+
+    return directionChange;
+}
+
+function openFullscreen() {
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) { /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE11 */
+    elem.msRequestFullscreen();
+  }
+}
+
+var countdown = 4
+function updateCountdown(){
+  countdown --
+  if (countdown == 0){
+    document.getElementById("instruction").style.display = "None"
+    newTrial()
+  }
+  else{
+    document.getElementById("instruction").innerHTML = "<h1>" + countdown + "</h1>"
+    setTimeout(updateCountdown, 1000)
+  }
+}
+
+function startTest(){
+    openFullscreen()
+    updateCountdown()
+}
+
+function newTrial(){
+    trialCount = trialCount + 1
+
+    if (trialCount > endTrialCount){
+        const threshold = jsQUEST.QuestMean(quest); // % Recommended by Pelli (1989) and King-Smith et al. (1994). 
+        const sd = jsQUEST.QuestSd(quest);
+        
+        console.log('---------------- Final Results -----------------')
+        var threshold_px = convertLog_to_Pixels(threshold)
+        var sd_px = convertLog_to_Pixels(sd)
+
+        if (font_type === "Pelli") {
+            threshold_px = threshold_px/5
+        } 
+
+        const thresholdSpacing_pixel = threshold_px * spacingFactor
+        const thresholdSpacing_cm = thresholdSpacing_pixel/PixelPerCm
+        const thresholdSpacing_deg = thresholdSpacing_pixel/PixelsPerDegree
+        const thresholdSpacingSD_deg = sd_px/PixelsPerDegree
+
+        document.getElementById('container_options').innerHTML = 
+        'Threshold Spacing (Deg): ' + Number(thresholdSpacing_deg).toFixed(2) + ' ± ' + Number(thresholdSpacingSD_deg).toFixed(2) + 
+        '<br> Threshold Acuity (logMAR): ' + Number(threshold).toFixed(2) + ' ± ' + Number(sd).toFixed(2)
+
+        return
+    }
+
+    logmar = updateStimsize(quest)
+    console.log('---------Trial', trialCount, '--------- Logmar', Number(logmar).toFixed(2));
+
+    document.getElementById('container_options').style.display = "none"
+    document.getElementById('container_stim').style.display = "block"
+    document.getElementById('fixationMarker').style.visibility = "visible"
+
+    // shuffle order 
+    shuffleArray(font_options);
+    pixels = convertLog_to_Pixels(logmar)
+
+    width = pixels
+    height = pixels
+    if (font_type === "Pelli") {
+        width = pixels/5
+    } 
+
+    spacing_horizontal = 100*(width * spacingFactor)/localStorage.screenWidthPX
+    spacing_vertical = 100*(height * spacingFactor)/localStorage.screenHeightPX
+    topLetter = 50 - spacing_vertical
+    bottomLetter = 50 + spacing_vertical
+    leftLetter = 50 - spacing_horizontal
+    rightLetter = 50 + spacing_horizontal
+
+    coordinates = getCenterCoordinates("targetLetter")
+
+    document.getElementById("targetLetter").style.top = "50%"
+    document.getElementById("targetLetter").style.left = "50%"
+
+    document.getElementById("topLetter").style.top = topLetter.toString() + "%"
+    document.getElementById("topLetter").style.left = "50%"
+    
+    document.getElementById("bottomLetter").style.top = bottomLetter.toString() + "%"
+    document.getElementById("bottomLetter").style.left = "50%"
+
+    // Position left and right letters
+    document.getElementById("leftLetter").style.left = leftLetter.toString() + "%"
+    document.getElementById("leftLetter").style.top = "50%"
+
+    document.getElementById("rightLetter").style.left = rightLetter.toString() + "%"
+    document.getElementById("rightLetter").style.top = "50%"
+
+
+    // show temporary cross
+    document.getElementById("topLetter").querySelector("img").style.visibility = "hidden"
+    document.getElementById("bottomLetter").querySelector("img").style.visibility = "hidden"
+    document.getElementById("leftLetter").querySelector("img").style.visibility = "hidden"
+    document.getElementById("targetLetter").querySelector("img").style.visibility = "hidden"
+    document.getElementById("fixationMarker").querySelector("img").style.height = PixelsPerDegree.toString() + "px"
+    document.getElementById("rightLetter").querySelector("img").style.visibility = "hidden"
+
+    document.getElementById("leftLetter").querySelector("img").src = 'fonts/' + font_type + '/' + font_options[0] + '.svg';
+    document.getElementById("targetLetter").querySelector("img").src = 'fonts/' + font_type + '/' + font_options[1] + '.svg';
+    document.getElementById("rightLetter").querySelector("img").src = 'fonts/' + font_type + '/' + font_options[2] + '.svg';
+    // document.getElementById("topLetter").querySelector("img").src = 'fonts/' + font_type + '/' +  font_options[3] + '.svg';
+    // document.getElementById("bottomLetter").querySelector("img").src = 'fonts/' + font_type + '/' +  font_options[4] + '.svg';
+    document.getElementById("topLetter").querySelector("img").src = 'fonts/' + font_type + '/' +  'blank' + '.svg';
+    document.getElementById("bottomLetter").querySelector("img").src = 'fonts/' + font_type + '/' +  'blank' + '.svg';
+
+
+    // show letters
+    setTimeout(showLetters, 1000);
+}
+
+function showLetters(){
+    if (eccentricity===0){
+    document.getElementById('fixationMarker').style.visibility = "hidden"
+    }
+
+    var letters = ['topLetter', 'bottomLetter', 'leftLetter', 'rightLetter', 'targetLetter'];
+    direction = directionChange()
+    // Loop through letters
+    for (var i = 0; i < letters.length; i++) {
+        var letterId = letters[i];
+        var coor = getCenterCoordinates(letterId);
+
+        // Calculate the left position based on the center coordinates and other parameters
+        var leftPosition = coor.x + (direction * eccentricity * PixelsPerDegree); // Adjust as needed
+
+        // Set the left position for the element with the given letterId
+        document.getElementById(letterId).style.left = leftPosition + 'px';
+    }
+
+    document.getElementById("topLetter").querySelector("img").style.height = pixels.toString() + "px"
+    document.getElementById("bottomLetter").querySelector("img").style.height = pixels.toString() + "px"
+    document.getElementById("leftLetter").querySelector("img").style.height = pixels.toString() + "px"
+    document.getElementById("targetLetter").querySelector("img").style.height = pixels.toString() + "px"
+    document.getElementById("rightLetter").querySelector("img").style.height = pixels.toString() + "px"
+
+    if (removeFlankers === true){
+    document.getElementById("leftLetter").querySelector("img").style.visibility = "hidden"
+    document.getElementById("targetLetter").querySelector("img").src = 'fonts/' + font_type + '/' + font_options[1] + '.svg';
+    document.getElementById("rightLetter").querySelector("img").style.visibility = "hidden"
+    document.getElementById("topLetter").querySelector("img").style.visibility = "hidden"
+    document.getElementById("bottomLetter").querySelector("img").style.visibility = "hidden"
+    
+    } else {
+    // document.getElementById("leftLetter").querySelector("img").src = 'fonts/' + font_type + '/' + font_options[0] + '.svg';
+    // document.getElementById("targetLetter").querySelector("img").src = 'fonts/' + font_type + '/' + font_options[1] + '.svg';
+    // document.getElementById("rightLetter").querySelector("img").src = 'fonts/' + font_type + '/' + font_options[2] + '.svg';
+    // document.getElementById("topLetter").querySelector("img").src = 'fonts/' + font_type + '/' +  font_options[3] + '.svg';
+    // document.getElementById("bottomLetter").querySelector("img").src = 'fonts/' + font_type + '/' +  font_options[4] + '.svg';
+    
+    document.getElementById("leftLetter").querySelector("img").style.visibility = "visible"
+    document.getElementById("targetLetter").querySelector("img").style.visibility = "visible"
+    document.getElementById("rightLetter").querySelector("img").style.visibility = "visible"
+    document.getElementById("topLetter").querySelector("img").style.visibility = "visible"
+    document.getElementById("bottomLetter").querySelector("img").style.visibility = "visible"
+}
+    setTimeout(showOptions, 250);
+}
+
+function createOptions() {
+    const container = document.getElementById('container_options');
+    const row1 = document.getElementById('row1');
+    const row2 = document.getElementById('row2');
+
+    container.addEventListener('click', function(event) {
+        // Check if a button was clicked
+        if (event.target.tagName === 'BUTTON') {
+            const clickedButton = event.target;
+
+            // Get the background image URL
+            const backgroundImageUrl = clickedButton.style.backgroundImage.replace('url("', '').replace('")', '');
+
+            // Extract just the filename without the ".svg" extension
+            const filename = backgroundImageUrl.split('/').pop().replace('.svg', '');
+
+            // Call a function with the extracted filename
+            recordAnswer(filename);
+
+        }
+    });
+
+    // Populate rows with buttons and images
+    for (let i = 0; i < answers.length; i++) {
+        const button = document.createElement('button');
+        const imageUrl = `fonts/${font_type}/${answers[i]}.svg`;
+        button.style.backgroundImage = `url(${imageUrl})`;
+        button.style.backgroundSize = 'contain';
+        button.style.backgroundPosition = 'center center';
+        button.style.border = 'none'; // Remove button border
+
+        if (i < 10) {
+            row1.appendChild(button);
+        } else {
+            row2.appendChild(button);
+        }
+    }
+}
+
+function recordAnswer(filename) {
+    // Replace this with your code to handle the button click
+    if (font_options[1]===filename){
+        console.log('Correct')
+        correct()
+    } else {
+        console.log('Incorrect')
+        incorrect()
+    } 
+
+    newTrial()
+}
+
+function showOptions(){
+    document.getElementById('container_options').style.display = "block"
+    document.getElementById('container_stim').style.display = "none"
+}
+
+
+function tanDegrees(angleInDegrees) {
+    var angleInRadians = angleInDegrees * (Math.PI / 180);
+    return Math.tan(angleInRadians);
+}
+
+function logmar_to_arcmin(value) {
+    return Math.pow(10, value);
+}
+
+function arcmin_to_logmar(value) {
+    // why 5? Because logmar is a measure of the stroke. Each optotype (Sloan letter, see below) has the same height and width; the ratio is 5:5.
+    return Math.log10(value)
+}
+
+
+function arcmin_to_deg(value){
+    return value/60
+}
+
+function deg_to_arcmin(value){
+    return value*60
+}
+
+
+
+function convertCriticalSpacing_to_logmar(spacing_deg){
+
+    var spacing_arcmin = deg_to_arcmin(spacing_deg/(5*spacingFactor))
+    var spacing_logmar = arcmin_to_logmar(spacing_arcmin)
+    return spacing_logmar
+}
+
+function convertLog_to_Pixels(logmar){
+    var target_arcmin = logmar_to_arcmin(logmar)
+
+        // why 5? Because logmar is a measure of the stroke. Each optotype (Sloan letter, see below) has the same height and width; the ratio is 5:5.
+    if (font_type === "Pelli"){
+        target_arcmin =  25*target_arcmin;
+    } else if (font_type === "Sloan") {
+        target_arcmin =  5*target_arcmin;
+    }
+
+
+    var target_deg = arcmin_to_deg(target_arcmin)
+    var target_cm = target_deg * OneCmInDegrees
+    var target_px = target_deg * PixelsPerDegree
+
+    var temp_target_deg = target_deg
+    var temp_target_cm = target_cm
+
+    // to convert into pelli's width which note is the same as sloan
+    if (font_type === "Pelli") {
+        temp_target_deg = temp_target_deg/5
+        temp_target_cm = temp_target_cm/5
+    }
+    
+    console.log('Critical Spacing: ', Number(temp_target_deg*spacingFactor).toFixed(2),'deg (' + Number(temp_target_cm).toFixed(2),'cm)')
+    console.log('Size: ',Number(temp_target_deg).toFixed(2), 'deg ', Number(target_px).toFixed(2),'px (' + Number(target_cm).toFixed(2),'cm)')
+
+    return target_px
+}
+
+function correct(){ 
+    updateQuest(logmar,1)
+}
+
+function incorrect(){
+    updateQuest(logmar,0)
+
+}
+
+
+document.addEventListener('DOMContentLoaded', function() { 
+    createOptions()
+    document.getElementById('distance-span').textContent = parseFloat(localStorage.distance) * 100 + ' ';
+    // Register the "R" key press
+        document.addEventListener('keydown', function(event) {
+        if (event.key === 'R' || event.key === 'r') {
+            trialCount = trialCount - 1
+            newTrial();
+        }
+    });
+})
+
+</script>
+
+
+
+    
+    
+
+    <div class="container" id="container_stim" style="display: none;">
+
+        <div id="topLetter" class="column middle">
+            <div class="letter"><img src='fonts/Pelli/one.svg' alt="some file" height='100'/></div>
+        </div>
+    
+        <div id="leftLetter" class="column">
+            <div class="letter"><img src='fonts/Pelli/one.svg' alt="some file" height='100'/></div>
+        </div>
+    
+        <div id="targetLetter" class="column">
+            <div class="letter"><img src='fonts/Pelli/two.svg' alt="some file" height='100'/></div>
+        </div>
+
+        <div id="fixationMarker" class="column">
+            <div class="letter"><img src='fonts/Pelli/plus.svg' alt="some file" height='100'/></div>
+        </div>
+    
+        <div id="rightLetter" class="column">
+            <div class="letter"><img src='fonts/Pelli/three.svg' alt="some file" height='100'/></div>
+        </div>
+    
+        <div id="bottomLetter" class="column middle">
+            <div class="letter"><img src='fonts/Pelli/one.svg' alt="some file" height='100'/></div>
+        </div>
+    </div>
+    
+
+    <div class="hidden-container" id="container_options" style="bottom: 0px;">
+        <h1>Select Answer</h1>
+        <div class="row" id="row1"></div>
+        <div class="row" id="row2"></div>
+    </div>
+
+    <div class="row gap-2" id="instruction">
+        <div class="col">
+            <div class="card" style="width: 42rem;height:15rem">
+                <div class="card-body" style="text-align: center;">
+                    <h3 class="card-title">Ready to Start?</h3>
+                    <h4 class="card-title">Please be <span id="distance-span" style="color: red;"></span> cm away from the screen.</h3>
+                    <h5> Note: You can press "R" to repeat a trial</h5>
+                    <button type="button" class="btn btn-primary" onclick="startTest()">Start</button>
+                <br>
+            </div>
+        </div>
+    </div>
+
+
+    
