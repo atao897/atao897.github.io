@@ -131,15 +131,17 @@ var endTrialCount = 40
 var removeFlankers = false
 var elem = document.documentElement;
 
+localStorage.PixelPerCm = localStorage.screenWidthPX/localStorage.screenWidth
 
 function viewingDistance(){
     PixelPerCm = Math.floor(localStorage.PixelPerCm);
-
+    console.log('pixelpercm',PixelPerCm)
     // PixelPerCm = 1181/28.9 //choromebook (169cm)
     // PixelPerCm = 810/15.5 //ipad portrait (15cm)
     // PixelPerCm = 1080/20.7 //ipad portrait (15cm)
 
     MinPermissiblelogMAR = lowLogmar;
+    console.log('MinPermissiblelogMAR',MinPermissiblelogMAR)
     MinLetterSizePixels = 8;
     MinPermissLetterSizeArcMin= (Math.pow(10,MinPermissiblelogMAR) * 5);
     MinPermissLetterSizeCm = MinLetterSizePixels/PixelPerCm;
@@ -168,7 +170,6 @@ viewingDistance()
 // localStorage.screenWidth = 50.6
 // localStorage.distance = 0.60
 
-localStorage.PixelPerCm = localStorage.screenWidthPX/localStorage.screenWidth
 
 var trialCount = 0
 var pixels = 0
