@@ -115,38 +115,21 @@ button {
 const urlParams = new URLSearchParams(window.location.search);
 const font_type = urlParams.get('fontType');
 const eccentricity = parseFloat(urlParams.get('eccentricity'));
+const removeFlankers = urlParams.get('removeFlankers') === 'true';
 
-//0.5 for 3 deg eccentricity & 0.8 for 6 deg eccentricity for Auxckland
-var logmar = 0.8 
-var lowLogmar = logmar
-var spacingFactor = 0
+var logmar = 0
+var spacingFactor = 1.4
 var direction = 0
-var low_spacingFactor = get_lowestSpacingFactor()
-var high_spacingFactor = criticalSpacingDegToFactor(4)
-if (eccentricity==3){
-    logmar = 0.8
-    lowLogmar = logmar
-    low_spacingFactor = criticalSpacingDegToFactor(0.9)
-    high_spacingFactor = criticalSpacingDegToFactor(1.8)
-} else if (eccentricity ==6){
-    logmar = 1
-    lowLogmar = logmar
-    low_spacingFactor = criticalSpacingDegToFactor(1.41)
-    high_spacingFactor = criticalSpacingDegToFactor(3.5)
+var lowLogmar = convertCriticalSpacing_to_logmar(0.5) //0.3
+if (eccentricity === 0){
+    lowLogmar = convertCriticalSpacing_to_logmar(0.05) //0.3
+}
+var highLogmar = convertCriticalSpacing_to_logmar(3.5)
+if (eccentricity === 0){
+    highLogmar = convertCriticalSpacing_to_logmar(0.5) //0.3
 }
 
-
-// var lowLogmar = convertCriticalSpacing_to_logmar(0.5) //0.3
-// if (eccentricity === 0){
-//     lowLogmar = convertCriticalSpacing_to_logmar(0.05) //0.3
-// }
-// var highLogmar = convertCriticalSpacing_to_logmar(3.5)
-// if (eccentricity === 0){
-//     highLogmar = convertCriticalSpacing_to_logmar(0.5) //0.3
-// }
-
 var endTrialCount = 40
-var removeFlankers = true
 var catchTrial = true
 var catchTrial_answers = []
 var elem = document.documentElement;
@@ -172,7 +155,7 @@ function viewingDistance(){
     console.log('Min Viewing Distance',Number(LetterViewingDistance/100).toFixed(2) )
 
     if (LetterViewingDistance<50){
-    localStorage.distance = 0.5
+    localStorage.distance = 0.50
     }else if (LetterViewingDistance<60){
     localStorage.distance = 0.60
     } else if (LetterViewingDistance<100){
@@ -180,7 +163,7 @@ function viewingDistance(){
     } else if (LetterViewingDistance<200){
     localStorage.distance = 2
     } else if (LetterViewingDistance<300){
-    localStorage.distance = 3
+    localStorage.distance = 2
     } else if (LetterViewingDistance<400){
     localStorage.distance = 4
     }
@@ -188,20 +171,11 @@ function viewingDistance(){
 
 viewingDistance()
 
-
-
 // localStorage.screenWidthPX = 1920
 // localStorage.screenHeightPX = 1080
 // localStorage.screenWidth = 50.6
 // localStorage.distance = 0.60
 
-
-
-
-// var tGuess = convertCriticalSpacing_to_logmar(1.8)
-// if (eccentricity == 0){
-//     tGuess = convertCriticalSpacing_to_logmar(0.2)
-// }
 
 var trialCount = 0
 var pixels = 0
@@ -220,15 +194,13 @@ font_options = ['butterfly', 'car', 'duck', 'flower', 'heart', 'house', 'moon', 
 answers = font_options
 }
 
-
-tGuess = criticalSpacingDegToFactor(1.8)
-if (eccentricity==3){
-tGuess = criticalSpacingDegToFactor(1)
-} else {
-tGuess = criticalSpacingDegToFactor(1.8)
+var tGuess = convertCriticalSpacing_to_logmar(1.8)
+if (eccentricity == 0 && removeFlankers==true){
+    tGuess = convertCriticalSpacing_to_logmar(0.2)
+} else if (eccentricity==0){
+    tGuess = convertCriticalSpacing_to_logmar(0.2)
 }
-
-var tGuessSd = 0.3*(high_spacingFactor - low_spacingFactor)
+var tGuessSd = 0.3*(highLogmar-lowLogmar)
 var pThreshold = 0.82
 var beta = 3
 var delta = 0.01
@@ -236,17 +208,17 @@ var gamma = 1/font_options.length
 var quest = jsQUEST.QuestCreate(tGuess, tGuessSd, pThreshold, beta, delta, gamma);
 
 function updateStimsize(){
-    spacingFactor = jsQUEST.QuestQuantile(quest)
-    if (spacingFactor<low_spacingFactor){
-        spacingFactor = low_spacingFactor
-    } else if (spacingFactor>high_spacingFactor){
-        spacingFactor = high_spacingFactor
+    logmar = jsQUEST.QuestQuantile(quest)
+    if (logmar<lowLogmar){
+        logmar = lowLogmar
+    } else if (logmar>highLogmar){
+        logmar = highLogmar
     }
-    return spacingFactor
+    return logmar
 }
 
-function updateQuest(spacingFactor, response){
-    quest = jsQUEST.QuestUpdate(quest, spacingFactor, response); 
+function updateQuest(logmar, response){
+    quest = jsQUEST.QuestUpdate(quest, logmar, response); 
 }
 
 function shuffleArray(array) {
@@ -308,60 +280,45 @@ function startTest(){
     updateCountdown()
 }
 
-
 function newTrial(){
     trialCount = trialCount + 1
 
     if (trialCount > endTrialCount){
         let threshold = jsQUEST.QuestMean(quest); // % Recommended by Pelli (1989) and King-Smith et al. (1994). 
-        if (threshold<low_spacingFactor){
-            threshold = low_spacingFactor
-        } else if (threshold>high_spacingFactor){
-            threshold = high_spacingFactor
+        if (threshold<lowLogmar){
+            threshold = lowLogmar
+        } else if (threshold>highLogmar){
+            threshold = highLogmar
         }
+        
         const sd = jsQUEST.QuestSd(quest);
-
-        var target_arcmin = logmar_to_arcmin(logmar)
-
-        // why 5? Because logmar is a measure of the stroke. Each optotype (Sloan letter, see below) has the same height and width; the ratio is 5:5.
-        if (font_type === "Pelli"){
-        target_arcmin =  25*target_arcmin;
-        } else if (font_type === "Sloan") {
-        target_arcmin =  5*target_arcmin;
-        } else if (font_type === "Auckland") {
-        target_arcmin =  8.23*target_arcmin;
-        }
-
-        thresholdSpacing_deg = arcmin_to_deg(target_arcmin) * threshold
-        thresholdSpacingSD_deg = arcmin_to_deg(logmar_to_arcmin(sd)) 
-
+        
         console.log('---------------- Final Results -----------------')
-        // var threshold_px = convertLog_to_Pixels(threshold)
-        // var sd_px = convertLog_to_Pixels(sd)
+        var threshold_px = convertLog_to_Pixels(threshold)
+        var sd_px = convertLog_to_Pixels(sd)
 
         if (font_type === "Pelli") {
-            thresholdSpacing_deg = thresholdSpacing_deg/5
+            threshold_px = threshold_px/5
         } 
 
-        // const thresholdSpacing_pixel = threshold_px * spacingFactor
-        // const thresholdSpacing_cm = thresholdSpacing_pixel/PixelPerCm
-        // const thresholdSpacing_deg = thresholdSpacing_pixel/PixelsPerDegree
-        // const thresholdSpacingSD_deg = sd_px/PixelsPerDegree
+        const thresholdSpacing_pixel = threshold_px * spacingFactor
+        const thresholdSpacing_cm = thresholdSpacing_pixel/PixelPerCm
+        const thresholdSpacing_deg = thresholdSpacing_pixel/PixelsPerDegree
+        const thresholdSpacingSD_deg = sd_px/PixelsPerDegree
         document.getElementById('container_options').style.bottom ="50%"
         document.getElementById('container_options').innerHTML = 
         'Threshold Spacing (Deg): ' + Number(thresholdSpacing_deg).toFixed(2) + ' ± ' + Number(thresholdSpacingSD_deg).toFixed(2) + 
-        '<br> Threshold Acuity (logMAR): ' + Number(logmar).toFixed(2) 
+        '<br> Threshold Acuity (logMAR): ' + Number(threshold).toFixed(2) + ' ± ' + Number(sd).toFixed(2) + 
         '</br><button onclick="returntoMenu()">Return to Menu</button>'
 
         return
     }
 
     if (catchTrial){
-    spacingFactor = high_spacingFactor
+    logmar = highLogmar
     } else {
-    spacingFactor = updateStimsize(quest)
+    logmar = updateStimsize(quest)
     }
-
     console.log('---------Trial', trialCount, '--------- Logmar', Number(logmar).toFixed(2));
 
     document.getElementById('container_options').style.display = "none"
@@ -471,7 +428,7 @@ function showLetters(){
     document.getElementById("topLetter").querySelector("img").style.visibility = "visible"
     document.getElementById("bottomLetter").querySelector("img").style.visibility = "visible"
 }
-    setTimeout(showOptions, 150);
+    setTimeout(showOptions, 200);
 }
 
 function createOptions() {
@@ -521,35 +478,34 @@ function recordAnswer(filename) {
         catchTrial_answers.push(1)
         }  else {
         correct()
-        }
+        }    
     } else {
         console.log('Incorrect')
         if (catchTrial){
         catchTrial_answers.push(0)
         }  else {
-        correct()
         incorrect()
         }
     } 
 
-    if (catchTrial && trialCount>2){
-        removeFlankers = false
-    }
-
-    if (catchTrial && trialCount==8){
+    if (catchTrial && trialCount==6){
         trialCount = 0
         catchTrial = false
-        let lastSix = catchTrial_answers.slice(-6);
+        let lastSix = catchTrial_answers.slice(-4);
         if (lastSix.reduce((partialSum, a) => partialSum + a, 0)<4){
             document.getElementById('container_options').style.bottom ="50%"
-            document.getElementById('container_options').innerHTML = 'Exit'
+            document.getElementById('container_options').innerHTML = '<h1>Test Completed</h1></br>' + '<h3>Thank-you - please head back to main menu</h3></br>' + 
+            '<button onclick="returntoMenu()">Return to Menu</button>'
             return
         }
     }
 
-
     newTrial()
+}
 
+function returntoMenu() {
+  // Change the location of the window to the page you want to redirect to
+  window.location.href = 'criticalSpacingMenu.html';
 }
 
 function showOptions(){
@@ -590,50 +546,6 @@ function convertCriticalSpacing_to_logmar(spacing_deg){
     return spacing_logmar
 }
 
-function criticalSpacingDegToFactor(criticalSpacingDeg){
-
-    var target_arcmin = logmar_to_arcmin(logmar) 
-    if (font_type === "Pelli"){
-        target_arcmin =  25*target_arcmin;
-    } else if (font_type === "Sloan") {
-        target_arcmin =  5*target_arcmin;
-    } else if (font_type === "Auckland") {
-        target_arcmin =  8.23*target_arcmin;
-    }
-
-    // width of letter
-    var target_deg = arcmin_to_deg(target_arcmin)
-    var target_cm = target_deg * OneCmInDegrees
-    var target_px = target_deg * PixelsPerDegree
-    
-    console.log('logmar:',arcmin_to_logmar(target_arcmin))
-    console.log('criticalSpacingFactor', criticalSpacingDeg/target_deg)
-    return criticalSpacingDeg/target_deg
-}
-
-function get_lowestSpacingFactor(){
-
-var target_arcmin = logmar_to_arcmin(logmar) 
-if (font_type === "Pelli"){
-    target_arcmin =  25*target_arcmin;
-} else if (font_type === "Sloan") {
-    target_arcmin =  5*target_arcmin;
-} else if (font_type === "Auckland") {
-    target_arcmin =  8.23*target_arcmin;
-}
-
-// width of letter
-var target_deg = arcmin_to_deg(target_arcmin)
-var target_cm = target_deg * OneCmInDegrees
-var target_px = target_deg * PixelsPerDegree
-
-var lowestSpacingFactor = 1 + 1/target_px
-
-console.log('lowestSpacingFactor', lowestSpacingFactor)
-return lowestSpacingFactor
-
-}
-
 function convertLog_to_Pixels(logmar){
     var target_arcmin = logmar_to_arcmin(logmar)
 
@@ -658,8 +570,6 @@ function convertLog_to_Pixels(logmar){
         temp_target_deg = temp_target_deg/5
         temp_target_cm = temp_target_cm/5
     }
-
-
     
     console.log('Critical Spacing: ', Number(temp_target_deg*spacingFactor).toFixed(2),'deg (' + Number(temp_target_cm).toFixed(2),'cm)')
     console.log('Size: ',Number(temp_target_deg).toFixed(2), 'deg ', Number(target_px).toFixed(2),'px (' + Number(target_cm).toFixed(2),'cm)')
@@ -667,13 +577,13 @@ function convertLog_to_Pixels(logmar){
     return target_px
 }
 
-function correct(){
-    updateQuest(spacingFactor,1)
-    
+function correct(){ 
+    updateQuest(logmar,1)
 }
 
 function incorrect(){
-    updateQuest(spacingFactor,0)
+    updateQuest(logmar,0)
+
 }
 
 
