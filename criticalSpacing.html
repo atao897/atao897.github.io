@@ -348,9 +348,9 @@ function newTrial(){
         // const thresholdSpacing_deg = thresholdSpacing_pixel/PixelsPerDegree
         // const thresholdSpacingSD_deg = sd_px/PixelsPerDegree
         document.getElementById('container_options').style.bottom ="50%"
-        document.getElementById('container_options').innerHTML = 
+        document.getElementById('container_options').innerHTML = '<h1> Test Completed </h1>' +
         'Threshold Spacing (Deg): ' + Number(thresholdSpacing_deg).toFixed(2) + ' ± ' + Number(thresholdSpacingSD_deg).toFixed(2) + 
-        '<br> Threshold Acuity (logMAR): ' + Number(logmar).toFixed(2) 
+        '<br> Threshold Acuity (logMAR): ' + Number(logmar).toFixed(2) +
         '</br><button onclick="returntoMenu()">Return to Menu</button>'
 
         return
@@ -542,7 +542,8 @@ function recordAnswer(filename) {
         let lastSix = catchTrial_answers.slice(-6);
         if (lastSix.reduce((partialSum, a) => partialSum + a, 0)<4){
             document.getElementById('container_options').style.bottom ="50%"
-            document.getElementById('container_options').innerHTML = 'Exit'
+            document.getElementById('container_options').innerHTML = '<h1>Test Completed</h1></br>' + '<h3>Thank-you - please head back to main menu</h3></br>' + 
+            '<button onclick="returntoMenu()">Return to Menu</button>'
             return
         }
     }
@@ -550,6 +551,11 @@ function recordAnswer(filename) {
 
     newTrial()
 
+}
+
+function returntoMenu() {
+  // Change the location of the window to the page you want to redirect to
+  window.location.href = 'criticalSpacingMenu.html';
 }
 
 function showOptions(){

@@ -163,7 +163,7 @@ function viewingDistance(){
     } else if (LetterViewingDistance<200){
     localStorage.distance = 2
     } else if (LetterViewingDistance<300){
-    localStorage.distance = 2
+    localStorage.distance = 3
     } else if (LetterViewingDistance<400){
     localStorage.distance = 4
     }
@@ -306,10 +306,16 @@ function newTrial(){
         const thresholdSpacing_deg = thresholdSpacing_pixel/PixelsPerDegree
         const thresholdSpacingSD_deg = sd_px/PixelsPerDegree
         document.getElementById('container_options').style.bottom ="50%"
-        document.getElementById('container_options').innerHTML = 
+        if (removeFlankers == false) {
+        document.getElementById('container_options').innerHTML = '<h1> Test Completed </h1>' +
         'Threshold Spacing (Deg): ' + Number(thresholdSpacing_deg).toFixed(2) + ' ± ' + Number(thresholdSpacingSD_deg).toFixed(2) + 
         '<br> Threshold Acuity (logMAR): ' + Number(threshold).toFixed(2) + ' ± ' + Number(sd).toFixed(2) + 
         '</br><button onclick="returntoMenu()">Return to Menu</button>'
+        } else {
+        document.getElementById('container_options').innerHTML = '<h1> Test Completed </h1>' +
+        '<br> Threshold Acuity (logMAR): ' + Number(threshold).toFixed(2) + ' ± ' + Number(sd).toFixed(2) + 
+        '</br><button onclick="returntoMenu()">Return to Menu</button>'
+        }
 
         return
     }
